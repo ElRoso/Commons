@@ -407,7 +407,7 @@ transitivo a la versión parcheada en `Directory.Packages.props` (comentario de 
 cierra; `CentralPackageTransitivePinningEnabled`).
 
 - 🔴 **Salida única ante un HIGH sin parche:** `NuGetAuditSuppress` sobre ese advisory, con el `#ID` del work item que lo sigue. Nada de bajar el gate ni de silenciar `NU1903`/`NU1904`.
-- Un pin directo gana el piso para todo consumidor; si el consumidor es ASP.NET, el framework poda `Cryptography.Xml`, así que `Cryptography.Pkcs` tiene que ir pineado también.
+- 🔴 **Un pin transitivo que el framework de ASP.NET Core poda no viaja en el nuspec.** `Cryptography.Xml` lo provee el framework y se poda en este build, pero un consumidor sin ASP.NET Core (un worker) lo resuelve en la versión vieja y rompe su restore. Una referencia directa tampoco alcanza: también se poda. Por eso `AzureAD` (que lo arrastra por Identity.Web → DataProtection) tiene `RestoreEnablePackagePruning=false` y el pin viaja como dependencia. Un paquete nuevo que arrastre un paquete del framework con pin va igual; se verifica restaurando un worker (`Microsoft.NET.Sdk.Worker`) contra el pack local.
 
 | Pin activo | Versión | Cierra |
 | --- | --- | --- |

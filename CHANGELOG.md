@@ -2,6 +2,30 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons 2027.0.1
+
+Metapaquete: referencia las versiones nuevas de `Serilog`, `Telegram`, `WindowsServices`, `AzureBlob` y `AzureAD`.
+
+## ElRoso.Commons.AzureAD 1.0.1
+
+- Declara `System.Security.Cryptography.Xml` 10.0.15 como dependencia: un consumidor sin ASP.NET Core resolvía 10.0.7, con advisories HIGH.
+
+## ElRoso.Commons.Serilog 1.0.1
+
+- `Serilog` 4.3.1 → 4.4.0 y `Serilog.Sinks.Seq` 9.0.0 → 9.1.0.
+
+## ElRoso.Commons.Telegram 1.0.1
+
+- `Microsoft.Extensions.Http.Resilience` 10.8.0 → 10.11.1.
+
+## ElRoso.Commons.WindowsServices 1.0.1
+
+- `Microsoft.Extensions.Hosting.WindowsServices` 10.0.7 → 10.0.15.
+
+## ElRoso.Commons.AzureBlob 1.0.1
+
+- `Azure.Storage.Blobs` 12.29.1 → 12.30.2.
+
 ## ElRoso.Commons 2027.0.0
 
 Metapaquete: referencia los 13 paquetes por área y trae `ElRosoApplicationBuilder`.

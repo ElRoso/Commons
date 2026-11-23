@@ -18,9 +18,8 @@ updates:
 
     # Majors que se suben a mano.
     ignore:
-      # Ignora majors de StyleCop.Analyzers.
+      # StyleCop.Analyzers queda fijo en 1.1.118.
       - dependency-name: "StyleCop.Analyzers"
-        update-types: ["version-update:semver-major"]
 
       # Ignora majors de Microsoft.Extensions.*, ASP.NET Core y EF Core.
       - dependency-name: "Microsoft.Extensions.*"

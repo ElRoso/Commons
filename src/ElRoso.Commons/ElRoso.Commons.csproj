@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>2028.0.1</Version>
+		<Version>2029.0.0</Version>
 		<Description>Metapaquete de ElRoso.Commons: referencia todos los paquetes por área y trae ElRosoApplicationBuilder.</Description>
 	</PropertyGroup>
 

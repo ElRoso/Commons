@@ -2,6 +2,68 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons 2028.0.1
+
+Metapaquete: referencia las versiones nuevas de los 13 paquetes por área.
+
+## ElRoso.Commons.AspNetCore 2.0.1
+
+- `Microsoft.AspNetCore.Authentication.JwtBearer` 10.0.7 → 10.0.15.
+- Dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.AzureAD 2.0.1
+
+- `Microsoft.Identity.Web` 4.9.0 → 4.18.0.
+- Dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.AzureBlob 1.0.2
+
+- Sin cambios propios: dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.Core 1.0.1
+
+- `FluentValidation` 12.1.1 → 12.2.0.
+
+## ElRoso.Commons.EntityFrameworkCore 1.0.1
+
+- `Microsoft.EntityFrameworkCore` 10.0.7 → 10.0.15.
+- Dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.Graph 1.0.1
+
+- Sin cambios propios: dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.MongoDB 1.0.1
+
+- `MongoDB.Driver` y `MongoDB.Bson` 3.9.0 → 3.14.1.
+- Dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.S3 1.0.1
+
+- `AWSSDK.S3` 4.0.23 → 4.1.2.
+- Dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.Serilog 1.0.2
+
+- Sin cambios propios: dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.SharePoint 1.0.1
+
+- Sin cambios propios: dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.Swagger 2.0.1
+
+- `Swashbuckle.AspNetCore.SwaggerGen` y `SwaggerUI` 10.1.7 → 10.3.1.
+- Dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.Telegram 1.0.2
+
+- Sin cambios propios: dependencias actualizadas de `Core`.
+
+## ElRoso.Commons.WindowsServices 1.0.2
+
+- Sin cambios propios: dependencias actualizadas de `Core`.
+
 ## ElRoso.Commons 2028.0.0
 
 Metapaquete: referencia `AspNetCore` 2.0.0, `Swagger` 2.0.0 y `AzureAD` 2.0.0.

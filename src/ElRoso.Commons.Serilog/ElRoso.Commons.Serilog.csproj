@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Description>Logging con Serilog: consola, archivo, Seq y Graylog, con el log de Hosting.Diagnostics silenciado bajo Warning.</Description>
 	</PropertyGroup>
 

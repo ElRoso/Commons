@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Description>Autenticación con Azure AD (Microsoft.Identity.Web).</Description>
+		<!-- Sin poda: los pins de paquetes del framework viajan en el nuspec para consumidores sin ASP.NET Core. -->
+		<RestoreEnablePackagePruning>false</RestoreEnablePackagePruning>
 	</PropertyGroup>
 
 	<ItemGroup>

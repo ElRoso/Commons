@@ -2,6 +2,25 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons 2028.0.0
+
+Metapaquete: referencia `AspNetCore` 2.0.0, `Swagger` 2.0.0 y `AzureAD` 2.0.0.
+
+- Cambio que rompe: arrastra `Asp.Versioning` 10; ver `ElRoso.Commons.AspNetCore 2.0.0`.
+
+## ElRoso.Commons.AspNetCore 2.0.0
+
+- `Asp.Versioning.Mvc` y `Asp.Versioning.Mvc.ApiExplorer` 8.1.1 → 10.2.1. `AddApiVersioningCustom` registra el versionado de controllers con `AddMvc()` explícito; el ruteo, el header `api-supported-versions` y los grupos del ApiExplorer no cambian.
+- Cambio que rompe: la v10 de `Asp.Versioning` convirtió en propiedades métodos de extensión que un consumidor puede usar, y el código que los llama deja de compilar. Por ejemplo: `HttpContext.GetRequestedApiVersion()` → `HttpContext.RequestedApiVersion`; `ApiDescription.GetApiVersion()` → `ApiDescription.ApiVersion`; `ApiDescription.IsDeprecated()` → `ApiDescription.IsDeprecated`; `ActionDescriptor.GetApiVersionMetadata()` → `ActionDescriptor.ApiVersionMetadata`.
+
+## ElRoso.Commons.Swagger 2.0.0
+
+- Cambio que rompe: depende de `ElRoso.Commons.AspNetCore` 2.0.0 y arrastra `Asp.Versioning` 10; ver `ElRoso.Commons.AspNetCore 2.0.0`.
+
+## ElRoso.Commons.AzureAD 2.0.0
+
+- Cambio que rompe: depende de `ElRoso.Commons.AspNetCore` 2.0.0 y arrastra `Asp.Versioning` 10; ver `ElRoso.Commons.AspNetCore 2.0.0`.
+
 ## ElRoso.Commons 2027.0.1
 
 Metapaquete: referencia las versiones nuevas de `Serilog`, `Telegram`, `WindowsServices`, `AzureBlob` y `AzureAD`.

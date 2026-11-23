@@ -34,40 +34,11 @@ updates:
       - dependency-name: "System.Security.Cryptography.*"
         update-types: ["version-update:semver-major"]
 
-    # Agrupa minor/patch; las majors quedan como PR individual.
+    # Agrupa todas las dependencias en un único PR semanal.
     groups:
-      microsoft-extensions:
+      nuget-all:
         patterns:
-          - "Microsoft.Extensions.*"
-        update-types:
-          - "minor"
-          - "patch"
-      kiota:
-        patterns:
-          - "Microsoft.Kiota.*"
-        update-types:
-          - "minor"
-          - "patch"
-      serilog:
-        patterns:
-          - "Serilog*"
-        update-types:
-          - "minor"
-          - "patch"
-      xunit:
-        patterns:
-          - "xunit*"
-        update-types:
-          - "minor"
-          - "patch"
-      test-tooling:
-        patterns:
-          - "Microsoft.NET.Test.Sdk"
-          - "coverlet.*"
-          - "Moq"
-        update-types:
-          - "minor"
-          - "patch"
+          - "*"
 
   # Workflows de GitHub Actions.
   - package-ecosystem: "github-actions"
@@ -79,3 +50,9 @@ updates:
     commit-message:
       prefix: "ci"
       include: "scope"
+
+    # Agrupa todas las actions en un único PR.
+    groups:
+      github-actions-all:
+        patterns:
+          - "*"

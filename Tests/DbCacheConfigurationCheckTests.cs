@@ -100,7 +100,9 @@ public class DbCacheConfigurationCheckTests
         //     remembered to call AddMemoryCacheCustom — that is, almost never.
         // ES: CreateBuilder registraba la cache pelada, así que el chequeo solo corría en una app que
         //     se acordara de llamar a AddMemoryCacheCustom — o sea, casi nunca.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var builder = ElRoso.Commons.ElRosoApplicationBuilder.CreateBuilder([]);
+#pragma warning restore CS0618
 
         Assert.Contains(
             builder.Services,

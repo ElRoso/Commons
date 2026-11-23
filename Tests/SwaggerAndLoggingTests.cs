@@ -336,7 +336,9 @@ public class SwaggerAndLoggingTests
         //     app compiles and fails later, in production, for a reason that looks unrelated.
         // ES: Toda app consumidora arranca acá. Si uno de estos registros desaparece en silencio, la
         //     app compila y falla después, en producción, por un motivo que parece no tener relación.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var builder = ElRosoApplicationBuilder.CreateBuilder([]);
+#pragma warning restore CS0618
 
         Assert.Contains(builder.Services, d => d.ServiceType == typeof(ElRoso.Services.IMailService));
         Assert.Contains(builder.Services, d => d.ServiceType == typeof(Microsoft.Extensions.Caching.Memory.IMemoryCache));
@@ -352,7 +354,9 @@ public class SwaggerAndLoggingTests
         //     the command line last so it wins over everything else.
         // ES: CreateBuilder limpia las fuentes de configuración por defecto y rearma la cadena, con
         //     la línea de comandos al final para que le gane a todo lo demás.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var builder = ElRosoApplicationBuilder.CreateBuilder(["--DefaultApiVersion=3.0"]);
+#pragma warning restore CS0618
 
         Assert.Equal("3.0", builder.Configuration["DefaultApiVersion"]);
     }
@@ -405,7 +409,9 @@ public class SwaggerAndLoggingTests
         //     without the host trying to load an assembly named after it.
         // ES: Todo el punto de la clave nueva: se puede pasar por donde sea — línea de comandos
         //     incluida — sin que el host intente cargar un assembly con ese nombre.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var builder = ElRosoApplicationBuilder.CreateBuilder(["--ApplicationDisplayName=UnNombreCualquiera"]);
+#pragma warning restore CS0618
 
         Assert.Equal("UnNombreCualquiera", builder.Configuration["ApplicationDisplayName"]);
     }
@@ -419,8 +425,10 @@ public class SwaggerAndLoggingTests
         // ES: El host falla con un FileNotFoundException sobre un assembly que nadie pidió, que no
         //     dice nada de la causa real. Se conserva como excepción interna y se envuelve en un
         //     mensaje que nombra la clave que hay que usar.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var exception = Record.Exception(() =>
             ElRosoApplicationBuilder.CreateBuilder(["--ApplicationName=UnNombreCualquiera"]));
+#pragma warning restore CS0618
 
         var invalid = Assert.IsType<InvalidOperationException>(exception);
         Assert.Contains("ApplicationDisplayName", invalid.Message, StringComparison.Ordinal);
@@ -440,8 +448,10 @@ public class SwaggerAndLoggingTests
         //     de Swagger y campo de log, lo que está bien desde appsettings.json — para entonces el
         //     host ya está armado — pero pasarla por línea de comandos hace que el host intente
         //     cargar un assembly con ese nombre y la app directamente no arranca.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var exception = Record.Exception(() =>
             ElRosoApplicationBuilder.CreateBuilder(["--ApplicationName=UnNombreCualquiera"]));
+#pragma warning restore CS0618
 
         Assert.IsType<FileNotFoundException>(exception?.InnerException);
     }
@@ -453,7 +463,9 @@ public class SwaggerAndLoggingTests
         //     map /healthz by hand.
         // ES: La trampa documentada: los servicios están, la ruta no — cada consumidor tiene que
         //     mapear /healthz a mano.
+#pragma warning disable CS0618 // se ejercita a propósito el bootstrap de compatibilidad
         var builder = ElRosoApplicationBuilder.CreateBuilder([]);
+#pragma warning restore CS0618
 
         Assert.Contains(builder.Services, d => d.ServiceType == typeof(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckService));
     }

@@ -1,0 +1,162 @@
+name: Release
+
+# Empaqueta y publica en nuget.org solo los paquetes pedidos, con la <Version> de cada csproj.
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'PackageId a publicar, separados por coma o espacio (ej. ElRoso.Commons.Core), o "all"'
+        required: true
+        type: string
+  # Workflow reutilizable, llamado por "Tag on version bump".
+  workflow_call:
+    inputs:
+      packages:
+        description: 'PackageId a publicar, separados por espacio'
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  CONFIGURATION: 'Release'
+  HUSKY: '0'
+
+jobs:
+  release:
+    name: Build, test and publish to NuGet.org
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # GitHub Release por paquete
+      id-token: write   # token OIDC para Trusted Publishing de NuGet
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Resolve packages
+        id: packages
+        env:
+          PACKAGES_INPUT: ${{ inputs.packages }}
+        run: |
+          set -euo pipefail
+          requested=$(printf '%s' "$PACKAGES_INPUT" | tr ',;\n' '   ' | xargs)
+          if [ -z "$requested" ]; then
+            echo "::error::No se pidió ningún paquete."
+            exit 1
+          fi
+          if [ "$requested" = 'all' ]; then
+            requested=$(for p in src/*/; do basename "$p"; done | xargs)
+          fi
+
+          ids=''
+          for id in $requested; do
+            if ! [[ "$id" =~ ^ElRoso\.Commons(\.[A-Za-z0-9]+)*$ ]] || [ ! -f "src/$id/$id.csproj" ]; then
+              echo "::error::'$id' no es un paquete de src/."
+              exit 1
+            fi
+            version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "src/$id/$id.csproj" | head -1 | tr -d '[:space:]')
+            if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.\-]+)?$ ]]; then
+              echo "::error::$id: la versión '$version' no es SemVer (X.Y.Z[-sufijo])."
+              exit 1
+            fi
+            ids="$ids $id"
+            echo "- $id $version" >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "ids=$(echo $ids)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore ElRoso.Commons.sln
+
+      - name: License gate
+        env:
+          IDS: ${{ steps.packages.outputs.ids }}
+        run: |
+          set -euo pipefail
+          projects=()
+          for id in $IDS; do projects+=("src/$id/$id.csproj"); done
+          python3 eng/license-gate.py "${projects[@]}"
+
+      - name: Build
+        run: dotnet build ElRoso.Commons.sln -c "$CONFIGURATION" --no-restore
+
+      - name: Test (gate the release)
+        run: |
+          dotnet test Tests/ElRoso.Commons.Tests.csproj \
+            -c "$CONFIGURATION" \
+            --no-build \
+            --logger "trx;LogFileName=test-results.trx" \
+            --results-directory ./TestResults
+
+      - name: Pack
+        env:
+          IDS: ${{ steps.packages.outputs.ids }}
+        run: |
+          set -euo pipefail
+          for id in $IDS; do
+            dotnet pack "src/$id/$id.csproj" -c "$CONFIGURATION" --no-build --output ./nupkg
+          done
+
+      - name: Verify packages
+        env:
+          IDS: ${{ steps.packages.outputs.ids }}
+        run: |
+          # shellcheck disable=SC2086
+          python3 eng/verify-pack.py ./nupkg $IDS
+
+      - name: NuGet login (OIDC -> temporary API key)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: edirosolini
+
+      # Sube cada .snupkg con su .nupkg; --skip-duplicate omite versiones ya publicadas.
+      - name: Publish to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push './nupkg/*.nupkg' \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Upload nupkg artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: nupkg-${{ github.run_id }}
+          path: ./nupkg/*.*nupkg
+          retention-days: 90
+
+      # Un GitHub Release por paquete cuyo tag <PackageId>/vX.Y.Z existe; un dispatch sin tag no crea ninguno.
+      - name: Create GitHub Releases
+        env:
+          IDS: ${{ steps.packages.outputs.ids }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for id in $IDS; do
+            version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "src/$id/$id.csproj" | head -1 | tr -d '[:space:]')
+            tag="$id/v$version"
+            if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+              echo "Sin tag $tag: no se crea Release." >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "Release $tag ya existe." >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
+            prerelease=()
+            if [[ "$version" == *-* ]]; then prerelease=(--prerelease); fi
+            gh release create "$tag" \
+              "./nupkg/$id.$version.nupkg" "./nupkg/$id.$version.snupkg" \
+              --verify-tag --title "$id $version" --generate-notes "${prerelease[@]}"
+          done

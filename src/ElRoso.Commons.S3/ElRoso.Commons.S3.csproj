@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Version>1.0.0</Version>
+		<Description>Almacenamiento de archivos en S3 o endpoints S3-compatibles.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ElRoso.Commons.Core\ElRoso.Commons.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" />
+	</ItemGroup>
+
+</Project>

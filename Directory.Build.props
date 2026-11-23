@@ -1,0 +1,10 @@
+<Project>
+
+	<!-- El restore falla ante un paquete con advisory HIGH (NU1903) o CRITICAL (NU1904), directo o transitivo. -->
+	<PropertyGroup>
+		<NuGetAudit>true</NuGetAudit>
+		<NuGetAuditMode>all</NuGetAuditMode>
+		<WarningsAsErrors>$(WarningsAsErrors);NU1903;NU1904</WarningsAsErrors>
+	</PropertyGroup>
+
+</Project>

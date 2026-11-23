@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<UserSecretsId>elroso-commons-tests</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.msbuild">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<!--
+			EN: TestServer — lets the pipeline itself be tested end to end. Its absence is why the
+			    UseElRoso middleware trap went unnoticed.
+			ES: TestServer — permite testear el pipeline de punta a punta. Su ausencia es la razón por
+			    la que la trampa de middlewares de UseElRoso pasó desapercibida.
+		-->
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\src\ElRoso.Commons\ElRoso.Commons.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Core\ElRoso.Commons.Core.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.AspNetCore\ElRoso.Commons.AspNetCore.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Serilog\ElRoso.Commons.Serilog.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Swagger\ElRoso.Commons.Swagger.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.EntityFrameworkCore\ElRoso.Commons.EntityFrameworkCore.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.MongoDB\ElRoso.Commons.MongoDB.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.AzureAD\ElRoso.Commons.AzureAD.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Graph\ElRoso.Commons.Graph.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.SharePoint\ElRoso.Commons.SharePoint.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.S3\ElRoso.Commons.S3.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.AzureBlob\ElRoso.Commons.AzureBlob.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Telegram\ElRoso.Commons.Telegram.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.WindowsServices\ElRoso.Commons.WindowsServices.csproj" />
+	</ItemGroup>
+
+</Project>

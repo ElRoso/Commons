@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<!-- Consumidor de prueba: solo los paquetes base, para verificar que no arrastran SDKs de terceros. -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\ElRoso.Commons.Core\ElRoso.Commons.Core.csproj" />
+		<ProjectReference Include="..\..\src\ElRoso.Commons.AspNetCore\ElRoso.Commons.AspNetCore.csproj" />
+		<ProjectReference Include="..\..\src\ElRoso.Commons.Serilog\ElRoso.Commons.Serilog.csproj" />
+		<ProjectReference Include="..\..\src\ElRoso.Commons.EntityFrameworkCore\ElRoso.Commons.EntityFrameworkCore.csproj" />
+	</ItemGroup>
+
+</Project>

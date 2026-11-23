@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Version>1.0.0</Version>
+		<Description>Núcleo de ElRoso.Commons: excepciones tipadas, DTOs y respuestas, hashing de contraseñas (BCrypt), cron jobs (Cronos), helpers y contratos de servicios.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BCrypt.Net-Next" />
+		<PackageReference Include="Cronos" />
+		<PackageReference Include="FluentValidation" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Version>2027.0.0</Version>
+		<Description>Metapaquete de ElRoso.Commons: referencia todos los paquetes por área y trae ElRosoApplicationBuilder.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ElRoso.Commons.Core\ElRoso.Commons.Core.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.AspNetCore\ElRoso.Commons.AspNetCore.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Serilog\ElRoso.Commons.Serilog.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Swagger\ElRoso.Commons.Swagger.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.EntityFrameworkCore\ElRoso.Commons.EntityFrameworkCore.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.MongoDB\ElRoso.Commons.MongoDB.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.AzureAD\ElRoso.Commons.AzureAD.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Graph\ElRoso.Commons.Graph.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.SharePoint\ElRoso.Commons.SharePoint.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.S3\ElRoso.Commons.S3.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.AzureBlob\ElRoso.Commons.AzureBlob.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Telegram\ElRoso.Commons.Telegram.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.WindowsServices\ElRoso.Commons.WindowsServices.csproj" />
+	</ItemGroup>
+
+</Project>

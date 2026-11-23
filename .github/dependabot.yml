@@ -1,0 +1,81 @@
+version: 2
+
+updates:
+  # Dependencias NuGet (Directory.Packages.props).
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Argentina/Buenos_Aires"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+    # Majors que se suben a mano.
+    ignore:
+      # Ignora majors de StyleCop.Analyzers.
+      - dependency-name: "StyleCop.Analyzers"
+        update-types: ["version-update:semver-major"]
+
+      # Ignora majors de Microsoft.Extensions.*, ASP.NET Core y EF Core.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
+
+      # Ignora majors de System.Security.Cryptography.*.
+      - dependency-name: "System.Security.Cryptography.*"
+        update-types: ["version-update:semver-major"]
+
+    # Agrupa minor/patch; las majors quedan como PR individual.
+    groups:
+      microsoft-extensions:
+        patterns:
+          - "Microsoft.Extensions.*"
+        update-types:
+          - "minor"
+          - "patch"
+      kiota:
+        patterns:
+          - "Microsoft.Kiota.*"
+        update-types:
+          - "minor"
+          - "patch"
+      serilog:
+        patterns:
+          - "Serilog*"
+        update-types:
+          - "minor"
+          - "patch"
+      xunit:
+        patterns:
+          - "xunit*"
+        update-types:
+          - "minor"
+          - "patch"
+      test-tooling:
+        patterns:
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet.*"
+          - "Moq"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Workflows de GitHub Actions.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

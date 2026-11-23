@@ -1,0 +1,87 @@
+name: Tag on version bump
+
+# Vigila la <Version> de cada csproj de src/ en mainline: por cada versión sin tag crea <PackageId>/vX.Y.Z y llama a Release con esos paquetes.
+on:
+  push:
+    branches:
+      - mainline
+    paths:
+      - 'src/*/*.csproj'
+  workflow_dispatch:
+
+concurrency:
+  group: tag-on-version-bump
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    name: Create the tags of new versions
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # push de los tags
+
+    outputs:
+      packages: ${{ steps.tag.outputs.packages }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create and push the tags
+        id: tag
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          created=''
+          for csproj in src/*/*.csproj; do
+            id=$(basename "$csproj" .csproj)
+            [ "$(basename "$(dirname "$csproj")")" = "$id" ] || continue
+
+            version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$csproj" | head -1 | tr -d '[:space:]')
+            if [ -z "$version" ]; then
+              echo "::error::$csproj no tiene <Version>."
+              exit 1
+            fi
+            if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.\-]+)?$ ]]; then
+              echo "::error::$id: la versión '$version' no es SemVer (X.Y.Z[-sufijo])."
+              exit 1
+            fi
+
+            tag="$id/v$version"
+            # Omite las versiones cuyo tag ya existe.
+            if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+              continue
+            fi
+
+            if ! grep -E '^## ' CHANGELOG.md 2>/dev/null | grep -F "$id" | grep -qF "$version"; then
+              echo "::warning::CHANGELOG.md no tiene una sección '## ' para $id $version; se taggea igual."
+            fi
+
+            git tag -a "$tag" -m "$tag"
+            git push origin "refs/tags/$tag"
+            created="$created $id"
+            echo "Created $tag on $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+          if [ -z "$created" ]; then
+            echo "Sin versiones nuevas." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "packages=$(echo $created)" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Publish the new versions
+    needs: tag
+    if: needs.tag.outputs.packages != ''
+    # Llama a Release con los paquetes taggeados.
+    uses: ./.github/workflows/release.yml
+    with:
+      packages: ${{ needs.tag.outputs.packages }}
+    secrets: inherit
+    permissions:
+      contents: write
+      id-token: write

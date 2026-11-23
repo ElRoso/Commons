@@ -1,0 +1,9 @@
+<Project>
+
+	<!-- Husky.Net: instala los git hooks tras el restore. El CI setea HUSKY=0 para saltearlo. -->
+	<Target Name="husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0 and '$(MSBuildProjectName)' == 'ElRoso.Commons'">
+		<Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory="$(MSBuildThisFileDirectory)" ContinueOnError="true" />
+		<Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory="$(MSBuildThisFileDirectory)" ContinueOnError="true" />
+	</Target>
+
+</Project>

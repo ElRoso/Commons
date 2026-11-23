@@ -6,8 +6,9 @@
     "BSD-3-Clause"
   ],
   "exceptions": {
-    "Microsoft.Graph@5.105.0": "Licencia declarada como archivo; el texto es MIT.",
+    "Apache.Arrow@22.1.0": "Licencia declarada como archivo; el texto es Apache-2.0 (incluye FlatBuffers, Apache-2.0).",
     "Microsoft.Graph.Core@3.2.5": "Licencia declarada como archivo; el texto es MIT.",
+    "Microsoft.Graph@5.105.0": "Licencia declarada como archivo; el texto es MIT.",
     "System.Security.Cryptography.ProtectedData@4.5.0": "Licencia declarada por URL (dotnet/corefx LICENSE.TXT); el texto es MIT."
   }
 }

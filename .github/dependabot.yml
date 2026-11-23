@@ -34,11 +34,14 @@ updates:
       - dependency-name: "System.Security.Cryptography.*"
         update-types: ["version-update:semver-major"]
 
-    # Agrupa todas las dependencias en un único PR semanal.
+    # Agrupa minors y patches en un único PR semanal; cada major va en su propio PR.
     groups:
       nuget-all:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   # Workflows de GitHub Actions.
   - package-ecosystem: "github-actions"

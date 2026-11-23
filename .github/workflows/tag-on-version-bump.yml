@@ -71,7 +71,7 @@ jobs:
           if [ -z "$created" ]; then
             echo "Sin versiones nuevas." >> "$GITHUB_STEP_SUMMARY"
           fi
-          echo "packages=$(echo $created)" >> "$GITHUB_OUTPUT"
+          echo "packages=$(xargs <<< "$created")" >> "$GITHUB_OUTPUT"
 
   release:
     name: Publish the new versions

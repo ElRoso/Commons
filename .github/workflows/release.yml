@@ -72,7 +72,7 @@ jobs:
             ids="$ids $id"
             echo "- $id $version" >> "$GITHUB_STEP_SUMMARY"
           done
-          echo "ids=$(echo $ids)" >> "$GITHUB_OUTPUT"
+          echo "ids=$(xargs <<< "$ids")" >> "$GITHUB_OUTPUT"
 
       - name: Restore
         run: dotnet restore ElRoso.Commons.sln

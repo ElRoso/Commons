@@ -411,7 +411,7 @@ cierra; `CentralPackageTransitivePinningEnabled`).
 
 | Pin activo | Versión | Cierra |
 | --- | --- | --- |
-| Familia `Microsoft.Kiota` (7 paquetes) | 1.22.2 | CVE-2026-44503: fuga de headers `Cookie`/`Proxy-Authorization` en redirects cross-host |
+| Familia `Microsoft.Kiota` (7 paquetes) | 2.2.0 | CVE-2026-44503 (GHSA-7j59-v9qr-6fq9): fuga de headers `Cookie`/`Proxy-Authorization` en redirects cross-host; la familia 2.x incluye el fix |
 | `Microsoft.OpenApi` | 2.7.5 | GHSA-v5pm-xwqc-g5wc: referencia circular de schema corta el parseo |
 | `System.Security.Cryptography.Xml` | 10.0.15 | GHSA-r955-8q5j-3h83, GHSA-7hqp-7c5m-4vq6, GHSA-c399-9853-6jmj |
 | `System.Security.Cryptography.Pkcs` | 10.0.15 | GHSA-846f-f764-76mx |

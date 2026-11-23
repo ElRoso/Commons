@@ -33,6 +33,22 @@ updates:
       - dependency-name: "System.Security.Cryptography.*"
         update-types: ["version-update:semver-major"]
 
+      # Ignora majors de Serilog que arrastran Microsoft.Extensions.* de otra línea; se revisan al pasar de .NET.
+      - dependency-name: "Serilog.AspNetCore"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Serilog.Extensions.Hosting"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Serilog.Extensions.Logging"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Serilog.Settings.Configuration"
+        update-types: ["version-update:semver-major"]
+
+      # Ignora majors de Swashbuckle y Microsoft.OpenApi; el salto de OpenApi rompe filtros de consumidores.
+      - dependency-name: "Swashbuckle.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.OpenApi"
+        update-types: ["version-update:semver-major"]
+
     # Agrupa minors y patches en un único PR semanal; cada major va en su propio PR.
     groups:
       nuget-all:

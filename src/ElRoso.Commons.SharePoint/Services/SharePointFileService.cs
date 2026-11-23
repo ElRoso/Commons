@@ -48,6 +48,15 @@ namespace ElRoso.Services
             }
         }
 
+        // Usa un cliente Graph ya armado en lugar de crearlo desde la configuración.
+        internal SharePointFileService(IConfiguration configuration, ILogger<SharePointFileService> logger, GraphServiceClient sharePointClient)
+            : base(logger)
+        {
+            this.configuration = configuration;
+            this.logger = logger;
+            this.sharePointClient = sharePointClient;
+        }
+
         public async Task<DriveItem> UploadFileSharePointAsync(FileInfo file, string? folderSharePoint = null, string? newFileName = null)
         {
             this.EnsureSharePointConfigured();
@@ -173,6 +182,7 @@ namespace ElRoso.Services
         private static string BuildSharePointPath(string? folder, string fileName)
         {
             var safeName = System.IO.Path.GetFileName(fileName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(safeName, nameof(fileName));
             return string.IsNullOrEmpty(folder) ? safeName : $"{folder}/{safeName}";
         }
 

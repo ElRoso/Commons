@@ -47,6 +47,15 @@ namespace ElRoso.Services
             }
         }
 
+        // Usa un cliente Graph ya armado en lugar de crearlo desde la configuración.
+        internal MailService(IConfiguration configuration, ILogger<MailService> logger, GraphServiceClient graphClient)
+            : base(logger)
+        {
+            this.configuration = configuration;
+            this.logger = logger;
+            this.graphClient = graphClient;
+        }
+
         public async Task SendGraphAsync(EmailRequest request, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

@@ -2,6 +2,69 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons 2029.0.0
+
+Metapaquete: referencia `Graph` 2.0.0, `SharePoint` 2.0.0 y las versiones nuevas de los otros 11 paquetes.
+
+- Cambio que rompe: arrastra `Microsoft.Graph` 6 y `Microsoft.Kiota` 2; ver `ElRoso.Commons.Graph 2.0.0` y `ElRoso.Commons.SharePoint 2.0.0`.
+
+## ElRoso.Commons.Graph 2.0.0
+
+- `Microsoft.Graph` 5.105.0 → 6.11.1 (`Microsoft.Graph.Core` 3.2.5 → 4.0.1, `Microsoft.Kiota` 1.22.2 → 2.2.0). El envío por `SendGraphAsync` no cambia.
+- Cambio que rompe: `Microsoft.Graph` 6 arrastra `Microsoft.Graph.Core` 4 y `Microsoft.Kiota` 2. Un consumidor que usa el SDK de Graph directamente tiene que compilar contra la 6. Kiota 2 quitó `KiotaSerializer.Deserialize` síncrono e `IAsyncParseNodeFactory`.
+- Cambio que rompe: un fallo al parsear la respuesta de Graph llega como `ApiException` con el status, los headers y el body.
+
+## ElRoso.Commons.SharePoint 2.0.0
+
+- `Microsoft.Graph` 5.105.0 → 6.11.1 (`Microsoft.Graph.Core` 3.2.5 → 4.0.1, `Microsoft.Kiota` 1.22.2 → 2.2.0).
+- Cambio que rompe: `ISharePointFileService` devuelve `DriveItem` de `Microsoft.Graph.Models`; un consumidor que usa esos tipos, o el SDK de Graph directamente, tiene que compilar contra la 6. Kiota 2 quitó `KiotaSerializer.Deserialize` síncrono e `IAsyncParseNodeFactory`.
+- Cambio que rompe: `ItemWithPath` lanza con un path nulo o vacío. `UploadFileSharePointAsync` con un nombre de archivo vacío o en blanco lanza `ArgumentException` antes de escribir.
+- Cambio que rompe: un fallo al parsear la respuesta de Graph llega como `ApiException` con el status, los headers y el body. Un 404 de Graph sigue llegando como `ODataError`: la descarga lo traduce a `FileNotFoundException` y el borrado lo ignora, igual que antes.
+
+## ElRoso.Commons.AspNetCore 2.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.AzureAD 2.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.AzureBlob 1.0.3
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.Core 1.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.EntityFrameworkCore 1.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.MongoDB 1.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.S3 1.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.Serilog 1.0.3
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.Swagger 2.0.2
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.Telegram 1.0.3
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
+## ElRoso.Commons.WindowsServices 1.0.3
+
+- Sin cambios propios: se republica por el cambio de los pins de seguridad de `Directory.Packages.props` (familia `Microsoft.Kiota` 1.22.2 → 2.2.0).
+
 ## ElRoso.Commons 2028.0.1
 
 Metapaquete: referencia las versiones nuevas de los 13 paquetes por área.

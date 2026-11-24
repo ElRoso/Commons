@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<Description>Repositorio base con Entity Framework Core, sin proveedor de base de datos: cache en memoria, paginación y auditoría.</Description>
 	</PropertyGroup>
 

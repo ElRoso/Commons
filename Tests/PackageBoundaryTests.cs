@@ -25,6 +25,7 @@ public class PackageBoundaryTests
         "Microsoft.Data.SqlClient",
         "Polly",
         "Microsoft.Extensions.Hosting.WindowsServices",
+        "Swashbuckle.",
     ];
 
     public static TheoryData<Type, string> Types => new()
@@ -73,6 +74,8 @@ public class PackageBoundaryTests
         { "AddTelegramNotifier", "ElRoso.Commons.Telegram" },
         { "AddTelegramPolling", "ElRoso.Commons.Telegram" },
         { "UseWindowsServiceCustom", "ElRoso.Commons.WindowsServices" },
+        { "AddElRosoOpenApi", "ElRoso.Commons.OpenApi" },
+        { "MapElRosoOpenApi", "ElRoso.Commons.OpenApi" },
     };
 
     public static TheoryData<string> BasePackages => new()
@@ -112,6 +115,20 @@ public class PackageBoundaryTests
         var forbidden = assembly.GetReferencedAssemblies()
             .Select(r => r.Name!)
             .Where(name => ForbiddenInBasePackages.Any(prefix => name.StartsWith(prefix, StringComparison.Ordinal)))
+            .ToList();
+
+        Assert.Empty(forbidden);
+    }
+
+    [Fact]
+    public void OpenApiPackageDoesNotReferenceSwashbuckle()
+    {
+        var assembly = LoadLibraryAssemblies().SingleOrDefault(a => a.GetName().Name == "ElRoso.Commons.OpenApi");
+        Assert.NotNull(assembly);
+
+        var forbidden = assembly.GetReferencedAssemblies()
+            .Select(r => r.Name!)
+            .Where(name => name.StartsWith("Swashbuckle.", StringComparison.Ordinal))
             .ToList();
 
         Assert.Empty(forbidden);

@@ -2,6 +2,69 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons.OpenApi 1.0.0
+
+- Paquete nuevo: documentación OpenAPI con `Microsoft.AspNetCore.OpenApi` 10.0.15. `AddElRosoOpenApi` registra un documento por versión de API (`Asp.Versioning.OpenApi` 10.2.3) con esquemas Bearer (JWT) y/o Basic; `MapElRosoOpenApi` publica `/openapi/{documentName}.json`.
+- El documento sirve para generar tipos TypeScript (por ejemplo, `openapi-typescript`).
+
+## ElRoso.Commons.AspNetCore 2.2.0
+
+- `AddApiVersioningCustom` acepta una acción de configuración aditiva para registrar el generador OpenAPI sin duplicar el versionado.
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.Swagger 2.0.3
+
+- Sin cambios propios: Swashbuckle resuelve `Microsoft.OpenApi` 2.13.1 (antes 2.7.5) por la suba del pin de seguridad.
+- Un consumidor que fija `Microsoft.OpenApi` por debajo de 2.13.1 tiene que subirlo.
+
+## ElRoso.Commons.Core 1.1.1
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.AzureAD 2.0.3
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.AzureBlob 1.0.4
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.EntityFrameworkCore 1.0.3
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.Graph 2.0.1
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.MongoDB 1.0.3
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.S3 1.0.3
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.Serilog 1.0.4
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.SharePoint 2.0.1
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.Telegram 1.0.4
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons.WindowsServices 1.0.4
+
+- Sin cambios propios: se republica por la suba del pin de seguridad Microsoft.OpenApi 2.7.5 → 2.13.1.
+
+## ElRoso.Commons 2029.1.0
+
+Metapaquete: referencia `ElRoso.Commons.OpenApi` 1.0.0 y las versiones nuevas de los otros 13 paquetes.
+
 ## ElRoso.Commons.Core 1.1.0
 
 - `Result`, `Result<T>`, `Error` y `ErrorType` (namespace `ElRoso.Outcomes`): un handler devuelve el error en vez de lanzar. `Error.FromValidation` arma el error de validación desde FluentValidation.

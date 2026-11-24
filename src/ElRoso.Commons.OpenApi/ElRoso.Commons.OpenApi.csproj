@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Version>1.0.0</Version>
+		<Description>OpenAPI nativo de ASP.NET Core, un documento por versión de API, con esquemas JWT y Basic.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ElRoso.Commons.AspNetCore\ElRoso.Commons.AspNetCore.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Asp.Versioning.OpenApi" />
+	</ItemGroup>
+
+</Project>

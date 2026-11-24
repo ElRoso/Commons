@@ -45,6 +45,7 @@
 		<ProjectReference Include="..\src\ElRoso.Commons.AspNetCore\ElRoso.Commons.AspNetCore.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.Serilog\ElRoso.Commons.Serilog.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.Swagger\ElRoso.Commons.Swagger.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.OpenApi\ElRoso.Commons.OpenApi.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.EntityFrameworkCore\ElRoso.Commons.EntityFrameworkCore.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.MongoDB\ElRoso.Commons.MongoDB.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.AzureAD\ElRoso.Commons.AzureAD.csproj" />

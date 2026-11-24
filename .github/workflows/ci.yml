@@ -115,6 +115,17 @@ jobs:
             exit 1
           fi
 
+      # Verifica que los documentos OpenAPI generados sean consumibles como tipos TypeScript.
+      - name: Smoke OpenAPI a TypeScript
+        run: |
+          set -euo pipefail
+          docs=$(ls samples/OpenApi/openapi/*.json)
+          for doc in $docs; do
+            out="$RUNNER_TEMP/$(basename "$doc" .json).d.ts"
+            npx --yes openapi-typescript@7.13.0 "$doc" -o "$out"
+            grep -q "export interface paths" "$out"
+          done
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v7

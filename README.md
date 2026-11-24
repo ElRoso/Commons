@@ -12,6 +12,7 @@ Publicados en nuget.org. Cada área es un paquete aparte: se instala solo lo que
 | `ElRoso.Commons.AspNetCore` | Middlewares (RFC 7807, RFC 9457, usuario actual), conversión de `Result` a HTTP, forwarded headers, health check, CORS, controllers, versionado de API, JWT |
 | `ElRoso.Commons.Serilog` | Logging con Serilog: consola, archivo, Seq y Graylog |
 | `ElRoso.Commons.Swagger` | Swagger / OpenAPI con Swashbuckle |
+| `ElRoso.Commons.OpenApi` | OpenAPI nativo de ASP.NET Core, un documento por versión, esquemas Bearer/Basic |
 | `ElRoso.Commons.EntityFrameworkCore` | Repositorio base con EF Core, sin proveedor de base de datos |
 | `ElRoso.Commons.MongoDB` | Repositorio base para MongoDB |
 | `ElRoso.Commons.AzureAD` | Autenticación con Azure AD |
@@ -32,8 +33,9 @@ arrancó en `2027.0.0` y los paquetes por área en `1.0.0`; la versión vigente 
 [`CHANGELOG.md`](CHANGELOG.md). Los tags de release son `<PackageId>/vX.Y.Z` y los
 cambios por versión están en [`CHANGELOG.md`](CHANGELOG.md).
 
-Dependencias entre paquetes: todos dependen de `ElRoso.Commons.Core`, salvo `ElRoso.Commons.AzureAD` y
-`ElRoso.Commons.Swagger`, que dependen de `ElRoso.Commons.AspNetCore`.
+Dependencias entre paquetes: todos dependen de `ElRoso.Commons.Core`, salvo `ElRoso.Commons.AzureAD`,
+`ElRoso.Commons.Swagger` y `ElRoso.Commons.OpenApi`, que dependen de `ElRoso.Commons.AspNetCore`.
+Swagger y OpenAPI nativo son paquetes distintos y conviven en la misma aplicación.
 
 ---
 
@@ -49,7 +51,7 @@ Dependencias entre paquetes: todos dependen de `ElRoso.Commons.Core`, salvo `ElR
 | Serialización       | System.Text.Json                                         |
 | Validación          | FluentValidation 12                                      |
 | Logging             | Serilog (Seq, Graylog, File)                             |
-| API Docs            | Swagger / OpenAPI + API Versioning                       |
+| API Docs            | Swagger (Swashbuckle) + OpenAPI nativo + API Versioning  |
 | Password Hashing    | BCrypt.Net-Next (work factor configurable)               |
 | Cron Jobs           | IHostedService + Cronos                                  |
 | Email               | Microsoft Graph / SMTP                                   |
@@ -198,6 +200,7 @@ src/
 ├── ElRoso.Commons.AspNetCore/           # Middlewares, forwarded headers, health check, CORS, controllers, versionado de API, JWT
 ├── ElRoso.Commons.Serilog/              # AddElRosoSerilog, sinks, SeqSinkSettings
 ├── ElRoso.Commons.Swagger/              # Swagger / OpenAPI, una doc por versión
+├── ElRoso.Commons.OpenApi/              # OpenAPI nativo, una doc por versión, esquemas Bearer/Basic
 ├── ElRoso.Commons.EntityFrameworkCore/  # ElRosoRepositoryBase<T>, BaseEntity, AddMemoryCacheCustom
 ├── ElRoso.Commons.MongoDB/              # Repository<T>, AuditEntity, AddMongoDb
 ├── ElRoso.Commons.AzureAD/              # AddAuthenticationAzureAD
@@ -450,6 +453,44 @@ Fábricas: `Error.NotFound`, `Error.Validation`, `Error.FromValidation`, `Error.
 | `Failure` | `Error.Failure` | 500 |
 
 `AddElRosoProblemDetails` también registra `DomainExceptionHandler`: las excepciones de dominio siguen dando su status y se loguean en Warning; las desconocidas dan 500 y fuera de Development ocultan el mensaje.
+
+---
+
+## OpenAPI nativo
+
+`ElRoso.Commons.OpenApi` (namespace `ElRoso.OpenApi`) sirve documentos OpenAPI de ASP.NET Core,
+**uno por versión de API**, en `/openapi/{documentName}.json`. Depende de `ElRoso.Commons.AspNetCore`
+y exige el versionado previo: `AddElRosoOpenApi` lanza `InvalidOperationException` si no se llamó
+`AddApiVersioningCustom` antes.
+
+```csharp
+builder.Services.AddApiVersioningCustom(builder.Configuration);   // primero
+builder.Services.AddElRosoOpenApi(builder.Configuration);         // Bearer por default
+
+var app = builder.Build();
+
+app.MapElRosoOpenApi();   // /openapi/{documentName}.json, un documento por versión
+```
+
+`AddElRosoOpenApi(configuration, schemes)` acepta `OpenApiAuthSchemes.None`, `Bearer` (default),
+`Basic` o la combinación `Bearer | Basic`. Los esquemas se publican en `components.securitySchemes`
+y en `security`; con `None` el documento no lleva seguridad.
+
+El transformador fija `info.title` desde `ApplicationDisplayName` —la misma clave del título de
+Swagger y de los logs—, la licencia **MIT** con URL `https://opensource.org/licenses/MIT` y el aviso
+de deprecación en la descripción de cada versión deprecada. `OpenApi:LicenseUrl` reemplaza la URL de
+la licencia cuando es una URI absoluta. Los `ProducesProblem(404)` se documentan como
+`application/problem+json` con el schema `ProblemDetails`.
+
+Para generar tipos TypeScript a partir de un documento:
+
+```bash
+npx openapi-typescript@7.13.0 https://<host>/openapi/v1.json -o src/api/v1.d.ts
+```
+
+> Swagger sigue igual: `ElRoso.Commons.Swagger` y `app.UseSwaggerCustom()` no cambian. Los dos
+> paquetes conviven en la misma app. El CI genera los tipos TS de `samples/OpenApi/openapi/*.json`
+> con `openapi-typescript@7.13.0` y exige `export interface paths` en cada archivo.
 
 ---
 

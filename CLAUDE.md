@@ -56,7 +56,8 @@ Workflows de GitHub Actions en `.github/workflows/`:
 | `audit.yml` | Lunes 08:00 AR y a mano | `dotnet list package --vulnerable --include-transitive`; avisa por Telegram si hay High/Critical o no pudo escanear (secrets `TELEGRAM_NOTIFIER_TOKEN` y `TELEGRAM_NOTIFIER_RECIPIENT_IDS`; sin ellos el job falla con un warning) |
 
 **Versionado por paquete, no lockstep.** La `<Version>` fija de cada csproj es la fuente de verdad:
-metapaquete `ElRoso.Commons` en `2027.0.0`, paquetes por área en `1.0.0`; después SemVer. Tags:
+el metapaquete `ElRoso.Commons` arrancó en `2027.0.0` y los paquetes por área en `1.0.0`; después SemVer. La
+versión vigente de cada uno es su `<Version>`, no un número escrito acá. Tags:
 `<PackageId>/vX.Y.Z` (por ejemplo `ElRoso.Commons.Core/v1.0.0`). Un cambio en `src/<PackageId>/` exige
 subir su `<Version>`; un cambio en `src/Directory.Build.props` exige subir todos; un `PackageVersion`
 agregado, borrado o cambiado en `Directory.Packages.props` exige subir los paquetes que lo referencian,
@@ -333,7 +334,7 @@ versionado.
 
 ## Tests
 
-- xUnit 2.9.3 + Moq 4.20.72, un solo proyecto (`Tests/ElRoso.Commons.Tests.csproj`) para todos los paquetes.
+- xUnit v2 + Moq (versiones en `Directory.Packages.props`), un solo proyecto (`Tests/ElRoso.Commons.Tests.csproj`) para todos los paquetes.
 - El CI exige 60 % de cobertura de líneas.
 - `EncryptionHelper` en tests: `static readonly` con work factor bajo (4), pagando BCrypt una vez por clase.
 

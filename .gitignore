@@ -120,6 +120,9 @@ coverage.opencover.xml
 *.trx
 packages/
 
+# Documentos OpenAPI generados al compilar samples/OpenApi.
+samples/OpenApi/openapi/
+
 ############################################################
 # ENTITY FRAMEWORK / MIGRACIONES GENERADAS TEMPORALES
 ############################################################

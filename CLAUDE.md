@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Librería base para backends ASP.NET Core Web API, publicada en nuget.org como 14 paquetes por área
+Librería base para backends ASP.NET Core Web API, publicada en nuget.org como 15 paquetes por área
 (MIT). Repo: `https://github.com/ElRoso/Commons`, rama `mainline`.
 
 | Campo | Valor |
@@ -29,7 +29,7 @@ dotnet build ElRoso.Commons.sln -c Release          # build
 dotnet test ElRoso.Commons.sln                      # todos los tests
 dotnet test Tests/ElRoso.Commons.Tests.csproj --filter "FullyQualifiedName~AddAsync"   # uno por nombre
 dotnet test Tests/ElRoso.Commons.Tests.csproj --collect:"XPlat Code Coverage"         # cobertura
-dotnet pack ElRoso.Commons.sln -c Release --output ./nupkg                            # los 14 .nupkg y .snupkg
+dotnet pack ElRoso.Commons.sln -c Release --output ./nupkg                            # los 15 .nupkg y .snupkg
 python3 eng/verify-pack.py ./nupkg --all            # licencia, readme, repositorio y símbolos de cada paquete
 python3 eng/license-gate.py src/*/*.csproj          # gate de licencias (después de dotnet restore)
 python3 eng/check-version-bump.py <ref-base> HEAD   # guarda de versión: cada paquete tocado sube su <Version>
@@ -50,7 +50,7 @@ Workflows de GitHub Actions en `.github/workflows/`:
 
 | Workflow | Cuándo | Qué hace |
 | --- | --- | --- |
-| `ci.yml` | PR y push a `mainline` | Tests de `eng/`, guarda de versión (solo PR), restore, gate de licencias, build, tests con cobertura (mínimo 60 % de líneas), smoke de `samples/Minimal`, y job `pack-verify` (pack de los 14 + `verify-pack.py`) |
+| `ci.yml` | PR y push a `mainline` | Tests de `eng/`, guarda de versión (solo PR), restore, gate de licencias, build, tests con cobertura (mínimo 60 % de líneas), smoke de `samples/Minimal`, smoke OpenAPI → TypeScript (`npx --yes openapi-typescript@7.13.0` sobre `samples/OpenApi/openapi/*.json`), y job `pack-verify` (pack de los 15 + `verify-pack.py`) |
 | `tag-on-version-bump.yml` | Push a `mainline` que toca `src/*/*.csproj` | Crea el tag `<PackageId>/vX.Y.Z` de cada `<Version>` sin tag y llama a `release.yml` con esos paquetes |
 | `release.yml` | Llamado por el anterior o `workflow_dispatch` (`packages`: ids o `all`) | Gate de licencias, build, tests, pack, `verify-pack.py`, publicación en nuget.org y un GitHub Release por paquete |
 | `audit.yml` | Lunes 08:00 AR y a mano | `dotnet list package --vulnerable --include-transitive`; avisa por Telegram si hay High/Critical o no pudo escanear (secrets `TELEGRAM_NOTIFIER_TOKEN` y `TELEGRAM_NOTIFIER_RECIPIENT_IDS`; sin ellos el job falla con un warning) |
@@ -106,6 +106,7 @@ Nada en el código está atado a un producto: los nombres de bot, rutas y demás
 │   ├── ElRoso.Commons.AspNetCore/       # middlewares, forwarded headers, health check, CORS, controllers, versionado de API, JWT
 │   ├── ElRoso.Commons.Serilog/          # AddElRosoSerilog, sinks, SeqSinkSettings
 │   ├── ElRoso.Commons.Swagger/          # Swagger / OpenAPI, una doc por versión
+│   ├── ElRoso.Commons.OpenApi/          # OpenAPI nativo, una doc por versión, esquemas Bearer/Basic
 │   ├── ElRoso.Commons.EntityFrameworkCore/  # ElRosoRepositoryBase<T>, BaseEntity, AddMemoryCacheCustom, DbCacheConfigurationCheck
 │   ├── ElRoso.Commons.MongoDB/          # Repository<T>, AuditEntity, AddMongoDb
 │   ├── ElRoso.Commons.AzureAD/          # AddAuthenticationAzureAD
@@ -123,8 +124,8 @@ Nada en el código está atado a un producto: los nombres de bot, rutas y demás
 └── Directory.Packages.props             # versiones centralizadas y pins de seguridad
 ```
 
-Dependencias entre paquetes: todos dependen de `Core`, salvo `AzureAD` y `Swagger`, que dependen de
-`AspNetCore`. El metapaquete referencia los otros 13. `PackageBoundaryTests` vigila que cada tipo viva en el paquete de su área y que los paquetes base
+Dependencias entre paquetes: todos dependen de `Core`, salvo `AzureAD`, `Swagger` y `OpenApi`, que dependen de
+`AspNetCore`. El metapaquete referencia los otros 14. `PackageBoundaryTests` vigila que cada tipo viva en el paquete de su área y que los paquetes base
 no arrastren SDKs de terceros (MongoDB, Graph, AWS, Azure, Identity.Web, SqlClient, Polly, WindowsServices).
 
 Un paquete nuevo es un `src/<PackageId>/<PackageId>.csproj` con su `<Version>`; lo recogen solos el CI,
@@ -415,7 +416,7 @@ cierra; `CentralPackageTransitivePinningEnabled`).
 | Pin activo | Versión | Cierra |
 | --- | --- | --- |
 | Familia `Microsoft.Kiota` (7 paquetes) | 2.2.0 | CVE-2026-44503 (GHSA-7j59-v9qr-6fq9): fuga de headers `Cookie`/`Proxy-Authorization` en redirects cross-host; la familia 2.x incluye el fix |
-| `Microsoft.OpenApi` | 2.7.5 | GHSA-v5pm-xwqc-g5wc: referencia circular de schema corta el parseo |
+| `Microsoft.OpenApi` | 2.13.1 | GHSA-v5pm-xwqc-g5wc: referencia circular de schema corta el parseo; piso de `Microsoft.AspNetCore.OpenApi` 10.0.15 |
 | `System.Security.Cryptography.Xml` | 10.0.15 | GHSA-r955-8q5j-3h83, GHSA-7hqp-7c5m-4vq6, GHSA-c399-9853-6jmj |
 | `System.Security.Cryptography.Pkcs` | 10.0.15 | GHSA-846f-f764-76mx |
 

@@ -19,22 +19,42 @@ namespace ElRoso.DependencyInjection
 
     public static class ConfigureServices
     {
-        public static IServiceCollection AddApiVersioningCustom(this IServiceCollection services, IConfiguration configuration)
-        {
-            var defaultApiVersion = GetDefaultApiVersion(configuration);
+        public static IServiceCollection AddApiVersioningCustom(this IServiceCollection services, IConfiguration configuration) =>
+            services.AddApiVersioningCustom(configuration, _ => { });
 
-            services
-                .AddApiVersioning(options =>
-                {
-                    options.DefaultApiVersion = defaultApiVersion;
-                    options.ReportApiVersions = true;
-                })
-                .AddMvc()
-                .AddApiExplorer(options =>
-                {
-                    options.GroupNameFormat = "'v'VVV";
-                    options.SubstituteApiVersionInUrl = true;
-                });
+        /// <summary>
+        /// Registra el versionado de API y aplica configuración adicional a su builder.
+        /// </summary>
+        /// <param name="services">Colección de servicios.</param>
+        /// <param name="configuration">Configuración de la aplicación.</param>
+        /// <param name="configure">Configuración adicional del builder.</param>
+        /// <returns>La misma colección de servicios.</returns>
+        public static IServiceCollection AddApiVersioningCustom(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            Action<IApiVersioningBuilder> configure)
+        {
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(configure);
+
+            // El builder puente reutiliza el versionado ya registrado.
+            var builder = IsVersioningRegistered(services)
+                ? new ApiVersioningBuilderProxy(services)
+                : services
+                    .AddApiVersioning(options =>
+                    {
+                        options.DefaultApiVersion = GetDefaultApiVersion(configuration);
+                        options.ReportApiVersions = true;
+                    })
+                    .AddMvc()
+                    .AddApiExplorer(options =>
+                    {
+                        options.GroupNameFormat = "'v'VVV";
+                        options.SubstituteApiVersionInUrl = true;
+                    });
+
+            configure(builder);
 
             return services;
         }
@@ -181,6 +201,9 @@ namespace ElRoso.DependencyInjection
             return services;
         }
 
+        private static bool IsVersioningRegistered(IServiceCollection services) =>
+            services.Any(descriptor => descriptor.ServiceType == typeof(IApiVersionReader));
+
         private static ApiVersion GetDefaultApiVersion(IConfiguration configuration)
         {
             var versionString = configuration.GetValue<string>("DefaultApiVersion");
@@ -194,6 +217,11 @@ namespace ElRoso.DependencyInjection
             int minor = (int)((version - major) * 10);
 
             return new ApiVersion(major, minor);
+        }
+
+        private sealed class ApiVersioningBuilderProxy(IServiceCollection services) : IApiVersioningBuilder
+        {
+            public IServiceCollection Services { get; } = services;
         }
     }
 }

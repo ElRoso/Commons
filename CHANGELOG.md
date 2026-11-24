@@ -2,6 +2,16 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons.Core 1.1.0
+
+- `Result`, `Result<T>`, `Error` y `ErrorType` (namespace `ElRoso.Outcomes`): un handler devuelve el error en vez de lanzar. `Error.FromValidation` arma el error de validación desde FluentValidation.
+
+## ElRoso.Commons.AspNetCore 2.1.0
+
+- `AddElRosoProblemDetails` y `UseElRosoProblemDetails`: respuestas `application/problem+json` RFC 9457 (`type`, `title`, `status`, `detail`, `instance`, `code`, `traceId`, `errors`) para `Result` y para las excepciones tipadas.
+- `ToHttpResult` (Minimal APIs) y `ToActionResult` (controllers) convierten un `Result` en la respuesta HTTP.
+- `ExceptionHandlerMiddleware` (RFC 7807) no cambia. Se monta uno de los dos, no ambos.
+
 ## ElRoso.Commons 2029.0.0
 
 Metapaquete: referencia `Graph` 2.0.0, `SharePoint` 2.0.0 y las versiones nuevas de los otros 11 paquetes.

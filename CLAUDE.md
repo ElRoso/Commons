@@ -11,7 +11,7 @@ Librería base para backends ASP.NET Core Web API, publicada en nuget.org como 1
 | Framework | .NET 10.0 (LTS), `net10.0` en todos los paquetes |
 | Datos | EF Core 10 (sin proveedor de base de datos), MongoDB (driver 3.9) |
 | Autenticación | JWT Bearer / Azure AD |
-| Errores | Middleware global de excepciones (RFC 7807) |
+| Errores | Middleware RFC 7807 o `Result` + Problem Details RFC 9457 |
 | Validación | FluentValidation |
 | Logs | Serilog (consola, archivo, Seq, Graylog) |
 | Hash de passwords | BCrypt.Net-Next (work factor configurable, default 12) |
@@ -102,7 +102,7 @@ Nada en el código está atado a un producto: los nombres de bot, rutas y demás
 /
 ├── src/                          # un csproj por paquete
 │   ├── ElRoso.Commons/                  # metapaquete + ElRosoApplicationBuilder
-│   ├── ElRoso.Commons.Core/             # excepciones, DTOs, respuestas, EncryptionHelper (BCrypt), CronJobService, helpers, contratos (IMailService, IBlobStorageService, ITelegramNotifier)
+│   ├── ElRoso.Commons.Core/             # excepciones, Result/Error, DTOs, respuestas, EncryptionHelper (BCrypt), CronJobService, helpers, contratos (IMailService, IBlobStorageService, ITelegramNotifier)
 │   ├── ElRoso.Commons.AspNetCore/       # middlewares, forwarded headers, health check, CORS, controllers, versionado de API, JWT
 │   ├── ElRoso.Commons.Serilog/          # AddElRosoSerilog, sinks, SeqSinkSettings
 │   ├── ElRoso.Commons.Swagger/          # Swagger / OpenAPI, una doc por versión
@@ -149,6 +149,7 @@ builder.Services.AddMongoDb(builder.Configuration);                  // MongoDB:
 builder.Services.AddMailService();                                   // Graph
 builder.Services.AddHealthChecks();
 builder.Services.AddExceptionHandlerMiddleware();
+// Alternativa: builder.Services.AddElRosoProblemDetails();   // reemplaza al middleware RFC 7807
 builder.Services.AddCurrentUserMiddleware();
 builder.Services.AddControllersCustom(builder.Configuration);
 builder.Services.AddAuthenticationJWT(builder.Configuration);        // o AddAuthenticationAzureAD (AzureAD)
@@ -157,6 +158,7 @@ var app = builder.Build();
 
 app.UseElRosoForwardedHeaders();   // PRIMERO en el pipeline
 app.UseExceptionHandlerMiddleware();
+// Alternativa: app.UseElRosoProblemDetails();   // montar uno solo, nunca ambos
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -356,7 +358,7 @@ private static readonly EncryptionHelper Sut = new(workFactor: 4);
 8. **No re-agregar `AutoMapper`**: nunca se usó y desde la v15 es de licencia comercial. Una dependencia que se agrega acá la heredan todos los consumidores, con su licencia; el gate de licencias lo vigila.
 9. **Nunca usar `CustomRandom` con `Random`**: sale de `RandomNumberGenerator`. Para contraseñas, `CustomRandom.Password(int length)`; el `Password()` sin parámetros es `[Obsolete]` (~38 bits de entropía).
 10. ⛔ **`ExceptionHandlerMiddleware` no vacía el `IMemoryCache`: no re-agregarlo.** Hay un solo `IMemoryCache` por proceso y los consumidores guardan ahí contadores de seguridad (throttle de login, permission stamps): un borrado global convertía cualquier 500 sin autenticar en un reset del freno a la fuerza bruta. Invalidar una entrada es tarea de quien la escribe. El constructor con `IMemoryCache` sigue `[Obsolete]` solo por compatibilidad e ignora la cache.
-11. **`ExceptionHandlerMiddleware` loguea una excepción de dominio en Warning y una desconocida en Error con stack trace.** No subir las de dominio a Error: un 404 o un 400 no es una falla del servidor.
+11. **`ExceptionHandlerMiddleware` y `DomainExceptionHandler` loguean una excepción de dominio en Warning y una desconocida en Error con stack trace.** No subir las de dominio a Error: un 404 o un 400 no es una falla del servidor.
 12. **`AddControllersCustom` apaga el filtro de ModelState (`SuppressModelStateInvalidFilter = true`)**: la validación es FluentValidation + `BadRequestException`. El body ilegible lo corta `UnreadableBodyFilter` (400 RFC 7807, errores de ModelState en `details`); sin él, `[FromBody]` llega null y termina en 500.
 13. 🔴 **`Microsoft.Extensions.*`, ASP.NET Core, EF Core y `System.Security.Cryptography.*` se quedan en la familia de net10.0 (`10.0.x`).** No subirlos a otra línea mayor aunque exista una versión nueva.
 14. 🔴 **`StyleCop.Analyzers` queda en `1.1.118`: la serie 2.x depreca reglas que este repo usa.** No actualizarlo.

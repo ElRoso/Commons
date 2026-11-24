@@ -28,7 +28,8 @@ dotnet add package ElRoso.Commons.AspNetCore
 ```
 
 **Versionado por paquete:** cada paquete lleva su propia versión SemVer. El metapaquete `ElRoso.Commons`
-está en `2027.0.0` y los paquetes por área en `1.0.0`. Los tags de release son `<PackageId>/vX.Y.Z` y los
+arrancó en `2027.0.0` y los paquetes por área en `1.0.0`; la versión vigente de cada uno está en nuget.org y en
+[`CHANGELOG.md`](CHANGELOG.md). Los tags de release son `<PackageId>/vX.Y.Z` y los
 cambios por versión están en [`CHANGELOG.md`](CHANGELOG.md).
 
 Dependencias entre paquetes: todos dependen de `ElRoso.Commons.Core`, salvo `ElRoso.Commons.AzureAD` y
@@ -54,7 +55,7 @@ Dependencias entre paquetes: todos dependen de `ElRoso.Commons.Core`, salvo `ElR
 | Email               | Microsoft Graph / SMTP                                   |
 | Archivos            | AWS S3 / Azure Blob Storage (`IBlobStorageService`) + SharePoint Online (`ISharePointFileService`) |
 | Mensajería          | Telegram Bot API (multi-bot)                             |
-| Tests               | xUnit 2.9 + Moq                                          |
+| Tests               | xUnit v2 + Moq                                           |
 
 ---
 

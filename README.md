@@ -8,8 +8,8 @@ Publicados en nuget.org. Cada área es un paquete aparte: se instala solo lo que
 
 | Paquete | Contenido |
 | --- | --- |
-| `ElRoso.Commons.Core` | Excepciones tipadas, DTOs y respuestas, hashing BCrypt, cron jobs, helpers y contratos de servicios |
-| `ElRoso.Commons.AspNetCore` | Middlewares (RFC 7807, usuario actual), forwarded headers, health check, CORS, controllers, versionado de API, JWT |
+| `ElRoso.Commons.Core` | Excepciones tipadas, `Result`/`Error` (RFC 9457), DTOs y respuestas, hashing BCrypt, cron jobs, helpers y contratos de servicios |
+| `ElRoso.Commons.AspNetCore` | Middlewares (RFC 7807, RFC 9457, usuario actual), conversión de `Result` a HTTP, forwarded headers, health check, CORS, controllers, versionado de API, JWT |
 | `ElRoso.Commons.Serilog` | Logging con Serilog: consola, archivo, Seq y Graylog |
 | `ElRoso.Commons.Swagger` | Swagger / OpenAPI con Swashbuckle |
 | `ElRoso.Commons.EntityFrameworkCore` | Repositorio base con EF Core, sin proveedor de base de datos |
@@ -367,6 +367,89 @@ services.AddAuthenticationAzureAD(configuration);
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `ExceptionHandlerMiddleware` | RFC 7807 `application/problem+json`. Mensaje genérico en Production, detalle en Development. Excepción de dominio en Warning, desconocida en Error con stack trace. |
 | `CurrentUserMiddleware`      | Extrae claims JWT → `CurrentUser` en `HttpContext.Items["currentUser"]`. Lanza 401 si falta cualquier claim.        |
+
+`AddElRosoProblemDetails` / `UseElRosoProblemDetails` es la otra opción para errores: monta `UseExceptionHandler` + `UseStatusCodePages` con `DomainExceptionHandler` y Problem Details RFC 9457. Ver la sección siguiente.
+
+---
+
+## Errores: `Result` y Problem Details (RFC 9457)
+
+Alternativa al middleware RFC 7807: la operación devuelve `Result` en vez de lanzar y la capa HTTP lo convierte en `application/problem+json`. Los tipos de dominio están en `ElRoso.Results` (Core) y las conversiones en `ElRoso.AspNetCore.Results` (AspNetCore).
+
+### Registro
+
+```csharp
+builder.Services.AddElRosoProblemDetails();   // Problem Details + DomainExceptionHandler, antes de Build()
+var app = builder.Build();
+app.UseElRosoProblemDetails();               // UseExceptionHandler + UseStatusCodePages
+```
+
+`UseElRosoProblemDetails` lanza `InvalidOperationException` si no se llamó `AddElRosoProblemDetails` antes del `Build()`.
+
+> 🔴 **Montar uno solo: `UseExceptionHandlerMiddleware` o `UseElRosoProblemDetails`.** Son dos caminos alternativos para el mismo pipeline; montar los dos duplica el manejo de excepciones. El middleware RFC 7807 existente no cambia.
+
+### Minimal API
+
+```csharp
+app.MapGet("/productos/{id:int}", async (int id, IProductoService service, CancellationToken ct) =>
+{
+    Result<Producto> result = await service.ObtenerAsync(id, ct);
+    return result.ToHttpResult();
+});
+```
+
+`Result.Success()` → 204. `Result<T>` con valor → 200 con el valor; `result.ToHttpResult(value => Results.Created(...))` deja armar otra respuesta. Una falla → Problem Details.
+
+### Controller
+
+```csharp
+[HttpGet("{id:int}")]
+public async Task<IActionResult> Obtener(int id, CancellationToken ct)
+{
+    Result<Producto> result = await this.service.ObtenerAsync(id, ct);
+    return result.ToActionResult(this);
+}
+```
+
+La sobrecarga `ToActionResult(this, value => this.Ok(value))` arma la respuesta con éxito.
+
+### Armar la falla
+
+```csharp
+if (!validationResult.IsValid)
+{
+    return Error.FromValidation(validationResult);   // agrupa por propiedad
+}
+
+return Error.NotFound("producto-ausente", "El producto no está disponible.");
+```
+
+Fábricas: `Error.NotFound`, `Error.Validation`, `Error.FromValidation`, `Error.Conflict`, `Error.Unauthorized`, `Error.Forbidden`, `Error.Failure`. `Result.Success()` y `Result.Failure(error)` crean el resultado; `Error` convierte implícitamente a `Result` y a `Result<T>`.
+
+```json
+{
+  "type": "about:blank",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "El producto no está disponible.",
+  "instance": "/productos/7",
+  "code": "producto-ausente",
+  "traceId": "00-abc...-01"
+}
+```
+
+`title` es el texto estándar del status, `detail` es `Error.Message` y `code` es `Error.Code`. `instance` es el path del request; `traceId` sale del `Activity` actual y, si no hay, del `TraceIdentifier` del contexto. En validación, `errors` trae los mensajes agrupados por propiedad.
+
+| `ErrorType` | Fábrica | HTTP |
+| --- | --- | --- |
+| `Validation` | `Error.Validation` / `Error.FromValidation` | 400 |
+| `Unauthorized` | `Error.Unauthorized` | 401 |
+| `Forbidden` | `Error.Forbidden` | 403 |
+| `NotFound` | `Error.NotFound` | 404 |
+| `Conflict` | `Error.Conflict` | 409 |
+| `Failure` | `Error.Failure` | 500 |
+
+`AddElRosoProblemDetails` también registra `DomainExceptionHandler`: las excepciones de dominio siguen dando su status y se loguean en Warning; las desconocidas dan 500 y fuera de Development ocultan el mensaje.
 
 ---
 

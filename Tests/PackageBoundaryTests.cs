@@ -7,6 +7,7 @@ using ElRoso.Exceptions;
 using ElRoso.Helpers;
 using ElRoso.Presentation.Middlewares;
 using ElRoso.Providers.NoSQL;
+using ElRoso.Results;
 using ElRoso.Providers.SQL;
 using ElRoso.Services;
 using ElRoso.Swagger;
@@ -33,6 +34,8 @@ public class PackageBoundaryTests
         { typeof(CronJobService), "ElRoso.Commons.Core" },
         { typeof(BadRequestException), "ElRoso.Commons.Core" },
         { typeof(ProblemResponse), "ElRoso.Commons.Core" },
+        { typeof(Result), "ElRoso.Commons.Core" },
+        { typeof(Error), "ElRoso.Commons.Core" },
         { typeof(IBlobStorageService), "ElRoso.Commons.Core" },
         { typeof(IMailService), "ElRoso.Commons.Core" },
         { typeof(ExceptionHandlerMiddleware), "ElRoso.Commons.AspNetCore" },
@@ -54,6 +57,9 @@ public class PackageBoundaryTests
         { "AddEncryptionHelper", "ElRoso.Commons.Core" },
         { "AddAuthenticationJWT", "ElRoso.Commons.AspNetCore" },
         { "AddControllersCustom", "ElRoso.Commons.AspNetCore" },
+        { "AddElRosoProblemDetails", "ElRoso.Commons.AspNetCore" },
+        { "UseElRosoProblemDetails", "ElRoso.Commons.AspNetCore" },
+        { "ToHttpResult", "ElRoso.Commons.AspNetCore" },
         { "UseSerialLogCustom", "ElRoso.Commons.Serilog" },
         { "UseSwaggerCustom", "ElRoso.Commons.Swagger" },
         { "AddMemoryCacheCustom", "ElRoso.Commons.EntityFrameworkCore" },

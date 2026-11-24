@@ -4,7 +4,7 @@ Una sección `## <PackageId> <versión>` por paquete y versión; los workflows d
 
 ## ElRoso.Commons.Core 1.1.0
 
-- `Result`, `Result<T>`, `Error` y `ErrorType` (namespace `ElRoso.Results`): un handler devuelve el error en vez de lanzar. `Error.FromValidation` arma el error de validación desde FluentValidation.
+- `Result`, `Result<T>`, `Error` y `ErrorType` (namespace `ElRoso.Outcomes`): un handler devuelve el error en vez de lanzar. `Error.FromValidation` arma el error de validación desde FluentValidation.
 
 ## ElRoso.Commons.AspNetCore 2.1.0
 

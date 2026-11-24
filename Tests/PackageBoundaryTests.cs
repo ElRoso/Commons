@@ -7,7 +7,7 @@ using ElRoso.Exceptions;
 using ElRoso.Helpers;
 using ElRoso.Presentation.Middlewares;
 using ElRoso.Providers.NoSQL;
-using ElRoso.Results;
+using ElRoso.Outcomes;
 using ElRoso.Providers.SQL;
 using ElRoso.Services;
 using ElRoso.Swagger;

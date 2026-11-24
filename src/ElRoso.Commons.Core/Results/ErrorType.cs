@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ElRoso.Results
+namespace ElRoso.Outcomes
 {
     /// <summary>
     /// Clasifica el origen de una falla.

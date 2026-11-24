@@ -374,7 +374,7 @@ services.AddAuthenticationAzureAD(configuration);
 
 ## Errores: `Result` y Problem Details (RFC 9457)
 
-Alternativa al middleware RFC 7807: la operación devuelve `Result` en vez de lanzar y la capa HTTP lo convierte en `application/problem+json`. Los tipos de dominio están en `ElRoso.Results` (Core) y las conversiones en `ElRoso.AspNetCore.Results` (AspNetCore).
+Alternativa al middleware RFC 7807: la operación devuelve `Result` en vez de lanzar y la capa HTTP lo convierte en `application/problem+json`. Los tipos de dominio están en `ElRoso.Outcomes` (Core) y las conversiones en `ElRoso.AspNetCore.Outcomes` (AspNetCore).
 
 ### Registro
 

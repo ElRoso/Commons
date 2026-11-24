@@ -2,12 +2,13 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ElRoso.Results
+namespace ElRoso.Outcomes
 {
     using FluentValidation.Results;
 
     /// <summary>
     /// Describe una falla con código, mensaje, tipo y detalles por propiedad.
+    /// La igualdad del record compara código, mensaje y tipo; Details se compara por referencia.
     /// </summary>
     public sealed record Error
     {

@@ -15,7 +15,7 @@ namespace ElRoso.Presentation.Middlewares
     using Microsoft.Extensions.Logging;
 
     /// <summary>
-    /// Maneja las excepciones no capturadas y escribe una respuesta RFC 7807.
+    /// Maneja las excepciones no capturadas y escribe una respuesta RFC 9457.
     /// </summary>
     internal sealed class DomainExceptionHandler : IExceptionHandler
     {
@@ -50,7 +50,7 @@ namespace ElRoso.Presentation.Middlewares
             // Las excepciones de dominio van en Warning; las desconocidas conservan Error y stack trace.
             if (isDomain)
             {
-                this.logger.LogWarning("{Message}", exception.Message);
+                this.logger.LogWarning("[{Path}] {Message}", httpContext.Request.Path.Value, exception.Message);
             }
             else
             {

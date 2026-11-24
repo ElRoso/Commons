@@ -1,7 +1,7 @@
 namespace ElRoso.Commons.Tests;
 
 using ElRoso.Exceptions;
-using ElRoso.Results;
+using ElRoso.Outcomes;
 using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
@@ -125,5 +125,61 @@ public class ResultTests
         Assert.Equal(ErrorType.Forbidden, Error.Forbidden("a", "a").Type);
         Assert.Equal(ErrorType.Failure, Error.Failure("a", "a").Type);
         Assert.Empty(Error.Failure("a", "a").Details);
+    }
+
+    [Fact]
+    public void GenericFailure_KeepsItsError()
+    {
+        var error = Error.Failure("x", "y");
+
+        Result<int> result = Result<int>.Failure(error);
+
+        Assert.True(result.IsFailure);
+        Assert.Same(error, result.Error);
+    }
+
+    [Fact]
+    public void GenericSuccess_KeepsItsValue()
+    {
+        Result<int> result = Result<int>.Success(42);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(42, result.Value);
+    }
+
+    [Fact]
+    public void Failure_WithNullError_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            _ = Result.Failure(null!);
+        });
+    }
+
+    [Fact]
+    public void ImplicitConversion_FromNullError_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            Result _ = (Error)null!;
+        });
+    }
+
+    [Fact]
+    public void GenericFailure_WithNullError_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            _ = Result<int>.Failure(null!);
+        });
+    }
+
+    [Fact]
+    public void GenericImplicitConversion_FromNullError_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            Result<int> _ = (Error)null!;
+        });
     }
 }

@@ -2,12 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ElRoso.AspNetCore.Results
+namespace ElRoso.AspNetCore.Outcomes
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ElRoso.Results;
+    using ElRoso.Outcomes;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;

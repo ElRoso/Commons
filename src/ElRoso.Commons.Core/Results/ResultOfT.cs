@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ElRoso.Results
+namespace ElRoso.Outcomes
 {
     using System;
 
@@ -36,6 +36,25 @@ namespace ElRoso.Results
             : throw new InvalidOperationException("The value of a failed result cannot be accessed.");
 
         /// <summary>
+        /// Crea un resultado con éxito y un valor.
+        /// </summary>
+        /// <param name="value">Valor del resultado.</param>
+        /// <returns>El resultado con éxito.</returns>
+        public static Result<T> Success(T value) => new(value);
+
+        /// <summary>
+        /// Crea un resultado con falla.
+        /// </summary>
+        /// <param name="error">Falla del resultado.</param>
+        /// <returns>El resultado con falla.</returns>
+        public static new Result<T> Failure(Error error)
+        {
+            ArgumentNullException.ThrowIfNull(error);
+
+            return new(error);
+        }
+
+        /// <summary>
         /// Convierte un valor en un resultado con éxito.
         /// </summary>
         /// <param name="value">Valor del resultado.</param>
@@ -45,7 +64,12 @@ namespace ElRoso.Results
         /// Convierte una falla en un resultado con falla.
         /// </summary>
         /// <param name="error">Falla del resultado.</param>
-        public static implicit operator Result<T>(Error error) => new(error);
+        public static implicit operator Result<T>(Error error)
+        {
+            ArgumentNullException.ThrowIfNull(error);
+
+            return new(error);
+        }
 
         /// <summary>
         /// Ejecuta la rama correspondiente al estado del resultado.

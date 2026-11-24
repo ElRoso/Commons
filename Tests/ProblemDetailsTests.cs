@@ -3,10 +3,10 @@ namespace ElRoso.Commons.Tests
     using System.Net;
     using System.Text;
     using System.Text.Json;
-    using ElRoso.AspNetCore.Results;
+    using ElRoso.AspNetCore.Outcomes;
     using ElRoso.DependencyInjection;
     using ElRoso.Exceptions;
-    using ElRoso.Results;
+    using ElRoso.Outcomes;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -406,7 +406,7 @@ namespace ElRoso.Commons.Tests
     }
 }
 
-namespace ElRoso.AspNetCore.Results
+namespace ElRoso.AspNetCore.Outcomes
 {
     // Declara el namespace publico de las extensiones de resultados.
 }

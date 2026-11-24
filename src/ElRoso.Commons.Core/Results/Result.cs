@@ -2,8 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace ElRoso.Results
+namespace ElRoso.Outcomes
 {
+    using System;
+
     /// <summary>
     /// Representa el resultado de una operación con éxito o con falla.
     /// </summary>
@@ -50,12 +52,22 @@ namespace ElRoso.Results
         /// </summary>
         /// <param name="error">Falla del resultado.</param>
         /// <returns>El resultado con falla.</returns>
-        public static Result Failure(Error error) => new(false, error);
+        public static Result Failure(Error error)
+        {
+            ArgumentNullException.ThrowIfNull(error);
+
+            return new(false, error);
+        }
 
         /// <summary>
         /// Convierte una falla en un resultado con falla.
         /// </summary>
         /// <param name="error">Falla del resultado.</param>
-        public static implicit operator Result(Error error) => Failure(error);
+        public static implicit operator Result(Error error)
+        {
+            ArgumentNullException.ThrowIfNull(error);
+
+            return Failure(error);
+        }
     }
 }

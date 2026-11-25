@@ -173,6 +173,36 @@ public class Argon2idPasswordHasherTests
         Assert.False(result.NeedsRehash);
     }
 
+    [Fact]
+    public void Verify_WithLowerStoredIterations_SucceedsAndReturnsRehash()
+    {
+        var stored = new Argon2idPasswordHasher(new Argon2idOptions { MemoryKiB = 1024, Iterations = 1 }).Hash(Password);
+        var stronger = new Argon2idPasswordHasher(new Argon2idOptions { MemoryKiB = 1024, Iterations = 2 });
+
+        var result = stronger.Verify(Password, stored);
+
+        Assert.True(result.Succeeded);
+        Assert.True(result.NeedsRehash);
+        var second = stronger.Verify(Password, result.RehashedHash!);
+        Assert.True(second.Succeeded);
+        Assert.False(second.NeedsRehash);
+    }
+
+    [Fact]
+    public void Verify_WithDifferentStoredParallelism_SucceedsAndReturnsRehash()
+    {
+        var stored = Sut.Hash(Password);
+        var parallel = new Argon2idPasswordHasher(new Argon2idOptions { MemoryKiB = 1024, Iterations = 1, Parallelism = 2 });
+
+        var result = parallel.Verify(Password, stored);
+
+        Assert.True(result.Succeeded);
+        Assert.True(result.NeedsRehash);
+        var second = parallel.Verify(Password, result.RehashedHash!);
+        Assert.True(second.Succeeded);
+        Assert.False(second.NeedsRehash);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("texto")]
@@ -190,15 +220,23 @@ public class Argon2idPasswordHasherTests
     }
 
     [Theory]
-    [InlineData("$argon2id$v=19$m=1048577,t=1,p=1$c2FsdHNhbHRzYWx0c2FsdA$3BBwWZdUGiwYYWK9260Rv+4Z1cuHnyqIX7ufDBLsfHc")]
-    [InlineData("$argon2id$v=19$m=1024,t=17,p=1$c2FsdHNhbHRzYWx0c2FsdA$3BBwWZdUGiwYYWK9260Rv+4Z1cuHnyqIX7ufDBLsfHc")]
-    [InlineData("$argon2id$v=19$m=1024,t=1,p=17$c2FsdHNhbHRzYWx0c2FsdA$3BBwWZdUGiwYYWK9260Rv+4Z1cuHnyqIX7ufDBLsfHc")]
+    [InlineData("$argon2id$v=19$m=8,t=17,p=1$c2FsdHNhbHRzYWx0c2FsdA$UMBVYvS6agSPdR5V2l0KXxWgz+AuSqMcyxFSFYWOSp8")]
+    [InlineData("$argon2id$v=19$m=136,t=1,p=17$c2FsdHNhbHRzYWx0c2FsdA$ygu+3QhJeGrq4qicAQid8YCGgrUQ/FXDShw59phXBg0")]
     public void Verify_WithStoredParametersAboveCap_FailsWithoutThrowing(string storedHash)
     {
         var result = Sut.Verify(Password, storedHash);
 
         Assert.False(result.Succeeded);
         Assert.False(result.NeedsRehash);
+    }
+
+    [Theory]
+    [InlineData("m=1048577,t=1,p=1")]
+    [InlineData("m=8,t=17,p=1")]
+    [InlineData("m=136,t=1,p=17")]
+    public void ParseParameters_AboveCap_ReturnsNull(string parameters)
+    {
+        Assert.Null(Argon2idPasswordHasher.ParseParameters(parameters));
     }
 
     [Fact]

@@ -9,7 +9,7 @@ namespace ElRoso.Helpers
     /// </summary>
     /// <param name="Succeeded">Indica si la contraseña coincide con el hash guardado.</param>
     /// <param name="RehashedHash">Hash nuevo a persistir, o <c>null</c> si no hace falta re-hashear.</param>
-#pragma warning disable SA1313 // StyleCop 1.1.118 no reconoce los parámetros de un record posicional.
+#pragma warning disable SA1313 // StyleCop no reconoce los parámetros de un record posicional.
     public readonly record struct PasswordVerification(bool Succeeded, string? RehashedHash)
 #pragma warning restore SA1313
     {

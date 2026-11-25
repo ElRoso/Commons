@@ -146,7 +146,7 @@ public sealed class Argon2idPasswordHasher : IPasswordHasher
         || storedHash.StartsWith(BcryptPrefix2x, StringComparison.Ordinal)
         || storedHash.StartsWith(BcryptPrefix2y, StringComparison.Ordinal);
 
-    // Codifica bytes en Base64 sin padding, como exige el formato PHC.
+    // Codifica bytes en Base64 sin padding.
     private static string ToBase64NoPadding(byte[] bytes) => Convert.ToBase64String(bytes).TrimEnd('=');
 
     // Restaura el padding que el formato PHC omite.
@@ -157,7 +157,7 @@ public sealed class Argon2idPasswordHasher : IPasswordHasher
     }
 
     // Devuelve null si los parámetros guardados están fuera de rango.
-    private static (int MemoryKiB, int Iterations, int Parallelism)? ParseParameters(string value)
+    internal static (int MemoryKiB, int Iterations, int Parallelism)? ParseParameters(string value)
     {
         var values = value.Split(',');
         if (values.Length != 3)

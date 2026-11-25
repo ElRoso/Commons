@@ -108,7 +108,7 @@ jobs:
           set -euo pipefail
           output=$(dotnet list samples/Minimal/Minimal.csproj package --include-transitive)
           printf '%s\n' "$output"
-          hits=$(printf '%s\n' "$output" | grep -E -i 'mongodb|sqlclient|identity\.web|microsoft\.graph|awssdk|azure\.|polly|windowsservices' || true)
+          hits=$(printf '%s\n' "$output" | grep -E -i 'mongodb|sqlclient|identity\.web|microsoft\.graph|awssdk|azure\.|polly|windowsservices|bouncycastle' || true)
           if [ -n "$hits" ]; then
             echo "::error::samples/Minimal arrastra dependencias que no corresponden a los paquetes base."
             printf '%s\n' "$hits"
@@ -142,7 +142,7 @@ jobs:
           path: ./TestResults/**/*.trx
           retention-days: 14
 
-  # Empaqueta los 14 paquetes con la versión de cada csproj y verifica licencia, readme, repositorio y símbolos.
+  # Empaqueta los 16 paquetes con la versión de cada csproj y verifica licencia, readme, repositorio y símbolos.
   pack-verify:
     name: Verify NuGet pack
     runs-on: ubuntu-latest

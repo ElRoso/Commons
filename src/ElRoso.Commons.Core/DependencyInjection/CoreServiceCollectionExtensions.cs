@@ -6,6 +6,7 @@ namespace ElRoso.DependencyInjection
 {
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
 
     public static class CoreServiceCollectionExtensions
     {
@@ -21,6 +22,9 @@ namespace ElRoso.DependencyInjection
                 var workFactor = configuration.GetValue<int?>("Encryption:WorkFactor") ?? 12;
                 return new ElRoso.Helpers.EncryptionHelper(workFactor);
             });
+
+            services.TryAddSingleton<ElRoso.Helpers.IPasswordHasher>(
+                sp => sp.GetRequiredService<ElRoso.Helpers.EncryptionHelper>());
 
             return services;
         }

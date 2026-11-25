@@ -12,7 +12,7 @@ namespace ElRoso.Helpers
     /// Proveedor de hash y verificación de contraseñas usando BCrypt.
     /// El work factor controla el costo de CPU — mayor significa hash más lento y mayor resistencia a fuerza bruta.
     /// </summary>
-    public class EncryptionHelper
+    public class EncryptionHelper : IPasswordHasher
     {
         /// <summary>Minimum allowed BCrypt work factor. / Factor de trabajo mínimo permitido.</summary>
         private const int MinWorkFactor = 4;
@@ -76,6 +76,49 @@ namespace ElRoso.Helpers
             }
 
             return BCrypt.Verify(password, hash);
+        }
+
+        /// <summary>
+        /// Hashea una contraseña en texto plano usando BCrypt con el factor de trabajo configurado.
+        /// </summary>
+        /// <param name="password">La contraseña en texto plano a hashear.</param>
+        /// <returns>El hash BCrypt listo para guardar.</returns>
+        public string Hash(string password) => this.HashPassword(password);
+
+        /// <summary>
+        /// Verifica una contraseña contra un hash BCrypt y devuelve el hash nuevo si el factor de trabajo subió.
+        /// </summary>
+        /// <param name="password">La contraseña en texto plano a verificar.</param>
+        /// <param name="storedHash">El hash BCrypt guardado.</param>
+        /// <returns>El resultado de la verificación y el hash nuevo cuando corresponde re-hashear.</returns>
+        public PasswordVerification Verify(string password, string storedHash)
+        {
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(storedHash))
+            {
+                return default;
+            }
+
+            try
+            {
+                if (!BCrypt.Verify(password, storedHash))
+                {
+                    return default;
+                }
+
+                var rehashed = BCrypt.PasswordNeedsRehash(storedHash, this.workFactor)
+                    ? this.HashPassword(password)
+                    : null;
+
+                return new PasswordVerification(true, rehashed);
+            }
+            catch (SaltParseException)
+            {
+                return default;
+            }
+            catch (ArgumentException)
+            {
+                return default;
+            }
         }
     }
 }

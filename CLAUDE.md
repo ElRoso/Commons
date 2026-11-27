@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Librería base para backends ASP.NET Core Web API, publicada en nuget.org como 15 paquetes por área
+Librería base para backends ASP.NET Core Web API, publicada en nuget.org como 16 paquetes por área
 (MIT). Repo: `https://github.com/ElRoso/Commons`, rama `mainline`.
 
 | Campo | Valor |
@@ -14,7 +14,7 @@ Librería base para backends ASP.NET Core Web API, publicada en nuget.org como 1
 | Errores | Middleware RFC 7807 o `Result` + Problem Details RFC 9457 |
 | Validación | FluentValidation |
 | Logs | Serilog (consola, archivo, Seq, Graylog) |
-| Hash de passwords | BCrypt.Net-Next (work factor configurable, default 12) |
+| Hash de passwords | BCrypt.Net-Next (work factor configurable, default 12) y Argon2id en `ElRoso.Commons.Argon2` |
 | Cron jobs | `CronJobService` (`IHostedService` + Cronos) |
 | Mails | Microsoft Graph / SMTP |
 | Archivos | `IBlobStorageService` (S3 o Azure Blob: un contrato, dos implementaciones, se elige una) + `ISharePointFileService` (contrato aparte) |
@@ -29,7 +29,7 @@ dotnet build ElRoso.Commons.sln -c Release          # build
 dotnet test ElRoso.Commons.sln                      # todos los tests
 dotnet test Tests/ElRoso.Commons.Tests.csproj --filter "FullyQualifiedName~AddAsync"   # uno por nombre
 dotnet test Tests/ElRoso.Commons.Tests.csproj --collect:"XPlat Code Coverage"         # cobertura
-dotnet pack ElRoso.Commons.sln -c Release --output ./nupkg                            # los 15 .nupkg y .snupkg
+dotnet pack ElRoso.Commons.sln -c Release --output ./nupkg                            # los 16 .nupkg y .snupkg
 python3 eng/verify-pack.py ./nupkg --all            # licencia, readme, repositorio y símbolos de cada paquete
 python3 eng/license-gate.py src/*/*.csproj          # gate de licencias (después de dotnet restore)
 python3 eng/check-version-bump.py <ref-base> HEAD   # guarda de versión: cada paquete tocado sube su <Version>
@@ -50,7 +50,7 @@ Workflows de GitHub Actions en `.github/workflows/`:
 
 | Workflow | Cuándo | Qué hace |
 | --- | --- | --- |
-| `ci.yml` | PR y push a `mainline` | Tests de `eng/`, guarda de versión (solo PR), restore, gate de licencias, build, tests con cobertura (mínimo 60 % de líneas), smoke de `samples/Minimal`, smoke OpenAPI → TypeScript (`npx --yes openapi-typescript@7.13.0` sobre `samples/OpenApi/openapi/*.json`), y job `pack-verify` (pack de los 15 + `verify-pack.py`) |
+| `ci.yml` | PR y push a `mainline` | Tests de `eng/`, guarda de versión (solo PR), restore, gate de licencias, build, tests con cobertura (mínimo 60 % de líneas), smoke de `samples/Minimal`, smoke OpenAPI → TypeScript (`npx --yes openapi-typescript@7.13.0` sobre `samples/OpenApi/openapi/*.json`), y job `pack-verify` (pack de los 16 + `verify-pack.py`) |
 | `tag-on-version-bump.yml` | Push a `mainline` que toca `src/*/*.csproj` | Crea el tag `<PackageId>/vX.Y.Z` de cada `<Version>` sin tag y llama a `release.yml` con esos paquetes |
 | `release.yml` | Llamado por el anterior o `workflow_dispatch` (`packages`: ids o `all`) | Gate de licencias, build, tests, pack, `verify-pack.py`, publicación en nuget.org y un GitHub Release por paquete |
 | `audit.yml` | Lunes 08:00 AR y a mano | `dotnet list package --vulnerable --include-transitive`; avisa por Telegram si hay High/Critical o no pudo escanear (secrets `TELEGRAM_NOTIFIER_TOKEN` y `TELEGRAM_NOTIFIER_RECIPIENT_IDS`; sin ellos el job falla con un warning) |
@@ -102,7 +102,8 @@ Nada en el código está atado a un producto: los nombres de bot, rutas y demás
 /
 ├── src/                          # un csproj por paquete
 │   ├── ElRoso.Commons/                  # metapaquete + ElRosoApplicationBuilder
-│   ├── ElRoso.Commons.Core/             # excepciones, Result/Error, DTOs, respuestas, EncryptionHelper (BCrypt), CronJobService, helpers, contratos (IMailService, IBlobStorageService, ITelegramNotifier)
+│   ├── ElRoso.Commons.Core/             # excepciones, Result/Error, DTOs, respuestas, IPasswordHasher, EncryptionHelper (BCrypt), CronJobService, helpers, contratos (IMailService, IBlobStorageService, ITelegramNotifier)
+│   ├── ElRoso.Commons.Argon2/           # Argon2idPasswordHasher (formato PHC), AddArgon2PasswordHasher, re-hash de BCrypt al verificar
 │   ├── ElRoso.Commons.AspNetCore/       # middlewares, forwarded headers, health check, CORS, controllers, versionado de API, JWT
 │   ├── ElRoso.Commons.Serilog/          # AddElRosoSerilog, sinks, SeqSinkSettings
 │   ├── ElRoso.Commons.Swagger/          # Swagger / OpenAPI, una doc por versión
@@ -125,8 +126,8 @@ Nada en el código está atado a un producto: los nombres de bot, rutas y demás
 ```
 
 Dependencias entre paquetes: todos dependen de `Core`, salvo `AzureAD`, `Swagger` y `OpenApi`, que dependen de
-`AspNetCore`. El metapaquete referencia los otros 14. `PackageBoundaryTests` vigila que cada tipo viva en el paquete de su área y que los paquetes base
-no arrastren SDKs de terceros (MongoDB, Graph, AWS, Azure, Identity.Web, SqlClient, Polly, WindowsServices).
+`AspNetCore`. El metapaquete referencia los otros 15. `PackageBoundaryTests` vigila que cada tipo viva en el paquete de su área y que los paquetes base
+no arrastren SDKs de terceros (MongoDB, Graph, AWS, Azure, Identity.Web, SqlClient, Polly, WindowsServices, BouncyCastle, Konscious).
 
 Un paquete nuevo es un `src/<PackageId>/<PackageId>.csproj` con su `<Version>`; lo recogen solos el CI,
 la guarda de versión, `release.yml` (`all`) y `verify-pack.py --all`.
@@ -145,6 +146,7 @@ builder.AddElRosoSerilog();             // Serilog
 
 builder.Services.AddElRosoForwardedHeaders(builder.Configuration);   // detrás de un reverse proxy
 builder.Services.AddEncryptionHelper(builder.Configuration);         // Core: obligatorio si usa BCrypt
+builder.Services.AddArgon2PasswordHasher(builder.Configuration);      // Argon2: reemplaza IPasswordHasher
 builder.Services.AddMemoryCacheCustom();                             // EntityFrameworkCore
 builder.Services.AddMongoDb(builder.Configuration);                  // MongoDB: obligatorio si usa MongoDB
 builder.Services.AddMailService();                                   // Graph
@@ -260,8 +262,8 @@ El paquete no depende de ningún proveedor de base de datos: lo elige el consumi
 
 ### Cifrado
 
-`EncryptionHelper` es Singleton (BCrypt se configura una vez; work factor de appsettings). Los valores
-JWT se cachean en el constructor.
+`EncryptionHelper` es Singleton (BCrypt se configura una vez; work factor de appsettings). `Argon2idPasswordHasher`
+también: los parámetros de Argon2id se leen una vez. Los valores JWT se cachean en el constructor.
 
 ### Cache — `ElRosoRepositoryBase`
 
@@ -270,7 +272,9 @@ clave (evita thundering herd). Toda escritura invalida la cache. 20 min absoluto
 
 ### Registraciones
 
-Por paquete: `AddEncryptionHelper` (Core, obligatorio con BCrypt), `AddMongoDb` (MongoDB, obligatorio con
+Por paquete: `AddEncryptionHelper` (Core, obligatorio con BCrypt), `AddArgon2PasswordHasher` (Argon2, lee
+`PasswordHashing:Argon2:MemoryKiB`, `:Iterations` y `:Parallelism`; reemplaza `IPasswordHasher` en cualquier orden
+respecto de `AddEncryptionHelper` y conserva `EncryptionHelper`), `AddMongoDb` (MongoDB, obligatorio con
 MongoDB), `AddMailService` (Graph), `AddMemoryCacheCustom` (EntityFrameworkCore), `AddS3BlobStorage` o
 `AddAzureBlobStorage` (**uno solo**: los dos registran `IBlobStorageService`), `AddSharePointFileService`,
 `AddTelegramBot("nombre", o => o.Token = ...)`, `AddTelegramPolling`, `AddTelegramNotifier(configuration)`
@@ -340,6 +344,7 @@ versionado.
 - xUnit v2 + Moq (versiones en `Directory.Packages.props`), un solo proyecto (`Tests/ElRoso.Commons.Tests.csproj`) para todos los paquetes.
 - El CI exige 60 % de cobertura de líneas.
 - `EncryptionHelper` en tests: `static readonly` con work factor bajo (4), pagando BCrypt una vez por clase.
+- `Argon2idPasswordHasher` en tests: parámetros bajos (`MemoryKiB = 1024`, `Iterations = 1`) para que corran rápido.
 
 ```csharp
 private static readonly EncryptionHelper Sut = new(workFactor: 4);
@@ -350,7 +355,7 @@ private static readonly EncryptionHelper Sut = new(workFactor: 4);
 ## Reglas críticas al modificar código
 
 1. **Nunca instanciar `MongoClient` dentro de un repositorio**: inyectar `IMongoDatabase`.
-2. **Nunca instanciar `EncryptionHelper` por request**: inyectar el Singleton.
+2. **Nunca instanciar `EncryptionHelper` ni `Argon2idPasswordHasher` por request**: inyectar el Singleton.
 3. **Nunca llamar `GetAsync()` sin filtro sobre tablas o colecciones grandes**: `GetPageAsync` / `GetAllInPaginationAsync` (SQL), `GetPageAsync` / `GetAsync(filtro)` (Mongo). Los dos topean en 10.000 y avisan en Warning.
 4. **Updates de 1-2 campos con `ExecuteUpdateAsync`** desde el DAO derivado, invalidando la cache a mano (`this.memoryCache.Remove(this.KeyNameCache)`): la base no se entera de esa escritura.
 5. **Toda operación NoSQL es `async`.**

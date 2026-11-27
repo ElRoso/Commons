@@ -14,17 +14,17 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 
 /// <summary>
-/// Hash de contraseñas con Argon2id en formato PHC, con verificación de hashes BCrypt y re-hash al verificar.
+/// Hashea con Argon2id en formato PHC, verifica hashes BCrypt y devuelve el hash nuevo al verificar.
 /// </summary>
 public sealed class Argon2idPasswordHasher : IPasswordHasher
 {
-    /// <summary>Maximum memory accepted when reading a stored hash. / Tope de memoria aceptado al leer un hash guardado.</summary>
+    /// <summary>Tope de memoria aceptado al leer un hash guardado.</summary>
     internal const int MaxMemoryKiB = 1_048_576;
 
-    /// <summary>Maximum passes accepted when reading a stored hash. / Tope de pasadas aceptado al leer un hash guardado.</summary>
+    /// <summary>Tope de pasadas aceptado al leer un hash guardado.</summary>
     internal const int MaxIterations = 16;
 
-    /// <summary>Maximum lanes accepted when reading a stored hash. / Tope de líneas aceptado al leer un hash guardado.</summary>
+    /// <summary>Tope de líneas aceptado al leer un hash guardado.</summary>
     internal const int MaxParallelism = 16;
 
     private const string Argon2idPrefix = "$argon2id$";
@@ -38,7 +38,7 @@ public sealed class Argon2idPasswordHasher : IPasswordHasher
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Argon2idPasswordHasher"/> class.
-    /// ES: Inicializa el hasher con los parámetros indicados.
+    /// Inicializa el hasher con los parámetros indicados.
     /// </summary>
     /// <param name="options">Parámetros de Argon2id; si se omite, se usan los valores por defecto.</param>
     /// <exception cref="ArgumentOutOfRangeException">Cuando algún parámetro está fuera de rango.</exception>

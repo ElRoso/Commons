@@ -5,37 +5,37 @@
 namespace ElRoso.Argon2;
 
 /// <summary>
-/// Parámetros de Argon2id. Los valores por defecto son los recomendados por OWASP.
+/// Define los parámetros usados para hashear con Argon2id.
 /// </summary>
 public sealed record Argon2idOptions
 {
     /// <summary>
     /// Gets the memory size in KiB.
-    /// ES: Memoria en KiB.
+    /// Memoria usada por el hash, en KiB.
     /// </summary>
     public int MemoryKiB { get; init; } = 19456;
 
     /// <summary>
     /// Gets the number of passes.
-    /// ES: Cantidad de pasadas.
+    /// Cantidad de pasadas de Argon2id.
     /// </summary>
     public int Iterations { get; init; } = 2;
 
     /// <summary>
     /// Gets the number of parallel lanes.
-    /// ES: Líneas de ejecución en paralelo.
+    /// Cantidad de carriles de ejecución en paralelo.
     /// </summary>
     public int Parallelism { get; init; } = 1;
 
     /// <summary>
     /// Gets the salt length in bytes.
-    /// ES: Largo del salt en bytes.
+    /// Longitud del salt, en bytes.
     /// </summary>
     public int SaltLength { get; init; } = 16;
 
     /// <summary>
     /// Gets the hash length in bytes.
-    /// ES: Largo del hash en bytes.
+    /// Longitud del hash, en bytes.
     /// </summary>
     public int HashLength { get; init; } = 32;
 }

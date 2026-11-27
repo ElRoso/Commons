@@ -8,7 +8,8 @@ Publicados en nuget.org. Cada área es un paquete aparte: se instala solo lo que
 
 | Paquete | Contenido |
 | --- | --- |
-| `ElRoso.Commons.Core` | Excepciones tipadas, `Result`/`Error` (RFC 9457), DTOs y respuestas, hashing BCrypt, cron jobs, helpers y contratos de servicios |
+| `ElRoso.Commons.Core` | Excepciones tipadas, `Result`/`Error` (RFC 9457), DTOs y respuestas, `IPasswordHasher`, hashing BCrypt, cron jobs, helpers y contratos de servicios |
+| `ElRoso.Commons.Argon2` | Hash de contraseñas con Argon2id (formato PHC) y re-hash de BCrypt al verificar |
 | `ElRoso.Commons.AspNetCore` | Middlewares (RFC 7807, RFC 9457, usuario actual), conversión de `Result` a HTTP, forwarded headers, health check, CORS, controllers, versionado de API, JWT |
 | `ElRoso.Commons.Serilog` | Logging con Serilog: consola, archivo, Seq y Graylog |
 | `ElRoso.Commons.Swagger` | Swagger / OpenAPI con Swashbuckle |
@@ -52,7 +53,7 @@ Swagger y OpenAPI nativo son paquetes distintos y conviven en la misma aplicaci�
 | Validación          | FluentValidation 12                                      |
 | Logging             | Serilog (Seq, Graylog, File)                             |
 | API Docs            | Swagger (Swashbuckle) + OpenAPI nativo + API Versioning  |
-| Password Hashing    | BCrypt.Net-Next (work factor configurable)               |
+| Password Hashing    | BCrypt.Net-Next (work factor configurable) + Argon2id     |
 | Cron Jobs           | IHostedService + Cronos                                  |
 | Email               | Microsoft Graph / SMTP                                   |
 | Archivos            | AWS S3 / Azure Blob Storage (`IBlobStorageService`) + SharePoint Online (`ISharePointFileService`) |
@@ -196,7 +197,8 @@ El consumidor mínimo compilado en el CI está en [`samples/Minimal`](samples/Mi
 ```text
 src/
 ├── ElRoso.Commons/                      # Metapaquete + ElRosoApplicationBuilder
-├── ElRoso.Commons.Core/                 # Excepciones, DTOs, respuestas, EncryptionHelper (BCrypt), CronJobService, helpers, contratos
+├── ElRoso.Commons.Core/                 # Excepciones, DTOs, respuestas, IPasswordHasher, EncryptionHelper (BCrypt), CronJobService, helpers, contratos
+├── ElRoso.Commons.Argon2/               # Argon2idPasswordHasher (PHC), AddArgon2PasswordHasher, re-hash de BCrypt
 ├── ElRoso.Commons.AspNetCore/           # Middlewares, forwarded headers, health check, CORS, controllers, versionado de API, JWT
 ├── ElRoso.Commons.Serilog/              # AddElRosoSerilog, sinks, SeqSinkSettings
 ├── ElRoso.Commons.Swagger/              # Swagger / OpenAPI, una doc por versión
@@ -494,7 +496,13 @@ npx openapi-typescript@7.13.0 https://<host>/openapi/v1.json -o src/api/v1.d.ts
 
 ---
 
-## Hashing de Contraseñas (`EncryptionHelper`)
+## Hashing de Contraseñas (`IPasswordHasher`)
+
+El contrato común es `IPasswordHasher` (`Hash`/`Verify`), en `ElRoso.Commons.Core`. `PasswordVerification`
+devuelve `Succeeded` y `RehashedHash`: si trae un hash, el consumidor lo guarda y migra el password sin pedir
+la contraseña de nuevo.
+
+### BCrypt (`EncryptionHelper`)
 
 BCrypt con work factor configurable. Registrado como Singleton — se inicializa una vez al arrancar.
 
@@ -521,6 +529,46 @@ public class UsuarioService(EncryptionHelper hasher)
 ```
 
 > BCrypt embebe el salt en el hash — no se necesita almacenarlo por separado.
+
+### Argon2id (`ElRoso.Commons.Argon2`)
+
+`Argon2idPasswordHasher` hashea en formato PHC (`$argon2id$v=19$m=19456,t=2,p=1$…`) y también verifica hashes
+BCrypt. Al verificar devuelve `RehashedHash` cuando el hash guardado es BCrypt o cuando sus parámetros de Argon2id
+son menores que los configurados.
+
+```csharp
+// Registro (Program.cs) — reemplaza IPasswordHasher en cualquier orden respecto de AddEncryptionHelper
+services.AddArgon2PasswordHasher(configuration);
+
+// Uso: migración transparente desde BCrypt y re-hash por parámetros
+var check = hasher.Verify(request.Password, user.PasswordHash);
+if (!check.Succeeded)
+{
+    throw new UnauthorizedException("Credenciales inválidas.");
+}
+
+if (check.RehashedHash is not null)
+{
+    user.PasswordHash = check.RehashedHash;
+    await users.UpdateAsync(user);
+}
+```
+
+```json
+// appsettings.json — valores por defecto recomendados por OWASP
+"PasswordHashing": {
+  "Argon2": {
+    "MemoryKiB": 19456,
+    "Iterations": 2,
+    "Parallelism": 1
+  }
+}
+```
+
+`AddArgon2PasswordHasher` registra `IPasswordHasher` como Singleton y conserva `EncryptionHelper` resoluble.
+Al leer un hash guardado se aplican topes: `m` ≤ 1.048.576 KiB, `t` ≤ 16, `p` ≤ 16. Un hash por encima devuelve
+`Succeeded = false`, sin excepción. La memoria por hash (19 MiB con los valores por defecto) se multiplica por los
+logins concurrentes: el freno de intentos es del consumidor.
 
 ---
 

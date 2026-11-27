@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>2029.1.0</Version>
+		<Version>2029.2.0</Version>
 		<Description>Metapaquete de ElRoso.Commons: referencia todos los paquetes por área y trae ElRosoApplicationBuilder.</Description>
 	</PropertyGroup>
 
@@ -20,6 +20,7 @@
 		<ProjectReference Include="..\ElRoso.Commons.Telegram\ElRoso.Commons.Telegram.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.WindowsServices\ElRoso.Commons.WindowsServices.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.OpenApi\ElRoso.Commons.OpenApi.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Argon2\ElRoso.Commons.Argon2.csproj" />
 	</ItemGroup>
 
 </Project>

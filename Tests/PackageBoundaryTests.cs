@@ -26,12 +26,16 @@ public class PackageBoundaryTests
         "Polly",
         "Microsoft.Extensions.Hosting.WindowsServices",
         "Swashbuckle.",
+        "BouncyCastle",
+        "Konscious",
     ];
 
     public static TheoryData<Type, string> Types => new()
     {
         { typeof(CustomRandom), "ElRoso.Commons.Core" },
         { typeof(EncryptionHelper), "ElRoso.Commons.Core" },
+        { typeof(IPasswordHasher), "ElRoso.Commons.Core" },
+        { typeof(PasswordVerification), "ElRoso.Commons.Core" },
         { typeof(CronJobService), "ElRoso.Commons.Core" },
         { typeof(BadRequestException), "ElRoso.Commons.Core" },
         { typeof(ProblemResponse), "ElRoso.Commons.Core" },
@@ -51,6 +55,7 @@ public class PackageBoundaryTests
         { typeof(ITelegramBot), "ElRoso.Commons.Telegram" },
         { typeof(TelegramRateLimitException), "ElRoso.Commons.Telegram" },
         { typeof(ElRosoApplicationBuilder), "ElRoso.Commons" },
+        { typeof(ElRoso.Argon2.Argon2idPasswordHasher), "ElRoso.Commons.Argon2" },
     };
 
     public static TheoryData<string, string> Extensions => new()
@@ -76,6 +81,7 @@ public class PackageBoundaryTests
         { "UseWindowsServiceCustom", "ElRoso.Commons.WindowsServices" },
         { "AddElRosoOpenApi", "ElRoso.Commons.OpenApi" },
         { "MapElRosoOpenApi", "ElRoso.Commons.OpenApi" },
+        { "AddArgon2PasswordHasher", "ElRoso.Commons.Argon2" },
     };
 
     public static TheoryData<string> BasePackages => new()

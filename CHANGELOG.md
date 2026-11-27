@@ -2,6 +2,23 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons.Argon2 1.0.0
+
+- Paquete nuevo: `Argon2idPasswordHasher` hashea con Argon2id en formato PHC (`$argon2id$v=19$…`, por defecto m = 19456 KiB, t = 2, p = 1) y verifica hashes BCrypt (`$2a$`, `$2b$`, `$2x$`, `$2y$`). Usa `BouncyCastle.Cryptography` 2.7.0 (MIT).
+- `AddArgon2PasswordHasher` lee `PasswordHashing:Argon2:MemoryKiB`, `:Iterations` y `:Parallelism`, registra `IPasswordHasher` como Singleton y reemplaza el registro de `AddEncryptionHelper` en cualquier orden.
+- Al verificar, `PasswordVerification.RehashedHash` trae el hash Argon2id para guardar: cubre la migración desde BCrypt y la suba de parámetros de Argon2id (m o t menores, p distinto).
+- Al leer un hash guardado se aplican topes: m ≤ 1.048.576 KiB, t ≤ 16, p ≤ 16. Un hash por encima devuelve `Succeeded = false`, sin excepción.
+
+## ElRoso.Commons.Core 1.2.0
+
+- `IPasswordHasher` y `PasswordVerification`: contrato común de hash y verificación de contraseñas, con `NeedsRehash` sobre el hash devuelto.
+- `EncryptionHelper` implementa `IPasswordHasher` (`Hash`/`Verify`) sin cambiar `HashPassword` ni `VerifyPassword`. `Verify` no lanza con un hash ilegible ni con un hash Argon2id.
+- `AddEncryptionHelper` registra además `IPasswordHasher` como Singleton con `TryAddSingleton`, apuntando a la misma instancia de `EncryptionHelper`.
+
+## ElRoso.Commons 2029.2.0
+
+- Metapaquete: suma `ElRoso.Commons.Argon2` 1.0.0 y referencia `ElRoso.Commons.Core` 1.2.0.
+
 ## ElRoso.Commons.OpenApi 1.0.0
 
 - Paquete nuevo: documentación OpenAPI con `Microsoft.AspNetCore.OpenApi` 10.0.15. `AddElRosoOpenApi` registra un documento por versión de API (`Asp.Versioning.OpenApi` 10.2.3) con esquemas Bearer (JWT) y/o Basic; `MapElRosoOpenApi` publica `/openapi/{documentName}.json`.

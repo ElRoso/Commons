@@ -42,6 +42,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\src\ElRoso.Commons\ElRoso.Commons.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.Core\ElRoso.Commons.Core.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Argon2\ElRoso.Commons.Argon2.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.AspNetCore\ElRoso.Commons.AspNetCore.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.Serilog\ElRoso.Commons.Serilog.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.Swagger\ElRoso.Commons.Swagger.csproj" />

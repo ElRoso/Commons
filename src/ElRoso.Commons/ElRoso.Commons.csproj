@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>2029.2.0</Version>
+		<Version>2029.3.0</Version>
 		<Description>Metapaquete de ElRoso.Commons: referencia todos los paquetes por área y trae ElRosoApplicationBuilder.</Description>
 	</PropertyGroup>
 
@@ -14,6 +14,7 @@
 		<ProjectReference Include="..\ElRoso.Commons.MongoDB\ElRoso.Commons.MongoDB.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.AzureAD\ElRoso.Commons.AzureAD.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.Graph\ElRoso.Commons.Graph.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Smtp\ElRoso.Commons.Smtp.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.SharePoint\ElRoso.Commons.SharePoint.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.S3\ElRoso.Commons.S3.csproj" />
 		<ProjectReference Include="..\ElRoso.Commons.AzureBlob\ElRoso.Commons.AzureBlob.csproj" />

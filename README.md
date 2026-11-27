@@ -17,7 +17,8 @@ Publicados en nuget.org. Cada área es un paquete aparte: se instala solo lo que
 | `ElRoso.Commons.EntityFrameworkCore` | Repositorio base con EF Core, sin proveedor de base de datos |
 | `ElRoso.Commons.MongoDB` | Repositorio base para MongoDB |
 | `ElRoso.Commons.AzureAD` | Autenticación con Azure AD |
-| `ElRoso.Commons.Graph` | Mails por Microsoft Graph o SMTP |
+| `ElRoso.Commons.Smtp` | Envío por SMTP con dependencia de Core |
+| `ElRoso.Commons.Graph` | Envío por Microsoft Graph y registro compatible de `IMailService` |
 | `ElRoso.Commons.SharePoint` | Archivos en SharePoint Online |
 | `ElRoso.Commons.S3` | Archivos en S3 o endpoints S3-compatibles |
 | `ElRoso.Commons.AzureBlob` | Archivos en Azure Blob Storage |
@@ -81,7 +82,7 @@ services.AddElRosoForwardedHeaders(configuration);   // detrás de un reverse pr
 services.AddEncryptionHelper(configuration);         // Core: BCrypt, work factor opcional (default 12 ≈ 250ms por hash)
 services.AddMemoryCacheCustom();                     // EntityFrameworkCore
 services.AddMongoDb(configuration);                  // MongoDB: MongoClient Singleton con connection pool
-services.AddMailService();                           // Graph: mails por Microsoft Graph o SMTP
+services.AddMailService();                           // Graph: fachada de correo y ambos transportes
 services.AddHealthChecks();
 services.AddExceptionHandlerMiddleware();
 services.AddCurrentUserMiddleware();
@@ -206,7 +207,8 @@ src/
 ├── ElRoso.Commons.EntityFrameworkCore/  # ElRosoRepositoryBase<T>, BaseEntity, AddMemoryCacheCustom
 ├── ElRoso.Commons.MongoDB/              # Repository<T>, AuditEntity, AddMongoDb
 ├── ElRoso.Commons.AzureAD/              # AddAuthenticationAzureAD
-├── ElRoso.Commons.Graph/                # MailService (Graph / SMTP)
+├── ElRoso.Commons.Smtp/                 # SmtpMailService, AddSmtpMailService
+├── ElRoso.Commons.Graph/                # GraphMailService, AddGraphMailService, fachada MailService
 ├── ElRoso.Commons.SharePoint/           # ISharePointFileService
 ├── ElRoso.Commons.S3/                   # S3BlobStorageService
 ├── ElRoso.Commons.AzureBlob/            # AzureBlobStorageService
@@ -574,10 +576,16 @@ logins concurrentes: el freno de intentos es del consumidor.
 
 ## Email
 
+Las extensiones de registro están en `ElRoso.DependencyInjection`. Los contratos están en `ElRoso.Services`
+y `EmailRequest` en `ElRoso.Domains.Requests`. Cada transporte se registra como singleton y conserva
+las implementaciones registradas previamente para su contrato.
+
 ### Microsoft Graph
 
+Referenciá `ElRoso.Commons.Graph`, llamá a `services.AddGraphMailService()` e inyectá `IGraphMailService`.
+
 ```csharp
-await mailService.SendGraphAsync(new EmailRequest
+await graphMailService.SendAsync(new EmailRequest
 {
     FromAddress = "notificaciones@mi-empresa.com",
     Recipients = ["cliente@example.com"],
@@ -585,21 +593,33 @@ await mailService.SendGraphAsync(new EmailRequest
     Subject = "Asunto",
     Body = "<h1>Hola</h1>",
     AttachFiles = new List<FileInfo> { new FileInfo("adjunto.pdf") },
-});
+}, cancellationToken);
 // appsettings: AzureMailService:TenantId, ClientId, ClientSecret, FromAddress
 ```
 
 ### SMTP
 
+Referenciá `ElRoso.Commons.Smtp`, llamá a `services.AddSmtpMailService()` e inyectá `ISmtpMailService`.
+Esta instalación funciona sin Microsoft Graph, Azure.Identity ni Kiota.
+
 ```csharp
-await mailService.SendSMTPAsync(new EmailRequest
+await smtpMailService.SendAsync(new EmailRequest
 {
     Recipients = ["destino@example.com"],
     Subject = "Asunto",
     Body = "Cuerpo en HTML",
-});
+}, cancellationToken);
 // appsettings: SmtpClient:Host, Port, UserName, Password, EnableSsl, From, DisplayName, ReplyTo
 ```
+
+El remitente de SMTP sale de `SmtpClient:From` o, si esa clave falta, de `SmtpClient:UserName`.
+La propiedad `EmailRequest.FromAddress` permite indicar el remitente para Graph.
+
+### API compatible
+
+`AddMailService()` en `ElRoso.Commons.Graph` registra ambos transportes y la fachada singleton
+`IMailService` con `SendGraphAsync` y `SendSMTPAsync`. `ElRosoApplicationBuilder.CreateBuilder(args)`
+mantiene ese registro para consumidores del metapaquete.
 
 ---
 

@@ -19,6 +19,7 @@ public class PackageBoundaryTests
     [
         "MongoDB.",
         "Microsoft.Graph",
+        "Microsoft.Kiota",
         "AWSSDK.",
         "Azure.",
         "Microsoft.Identity.Web",
@@ -43,6 +44,8 @@ public class PackageBoundaryTests
         { typeof(Error), "ElRoso.Commons.Core" },
         { typeof(IBlobStorageService), "ElRoso.Commons.Core" },
         { typeof(IMailService), "ElRoso.Commons.Core" },
+        { typeof(ISmtpMailService), "ElRoso.Commons.Core" },
+        { typeof(IGraphMailService), "ElRoso.Commons.Core" },
         { typeof(ExceptionHandlerMiddleware), "ElRoso.Commons.AspNetCore" },
         { typeof(ForwardedHeadersSetup), "ElRoso.Commons.AspNetCore" },
         { typeof(HealthCheckSetup), "ElRoso.Commons.AspNetCore" },
@@ -72,6 +75,8 @@ public class PackageBoundaryTests
         { "AddMongoDb", "ElRoso.Commons.MongoDB" },
         { "AddAuthenticationAzureAD", "ElRoso.Commons.AzureAD" },
         { "AddMailService", "ElRoso.Commons.Graph" },
+        { "AddGraphMailService", "ElRoso.Commons.Graph" },
+        { "AddSmtpMailService", "ElRoso.Commons.Smtp" },
         { "AddSharePointFileService", "ElRoso.Commons.SharePoint" },
         { "AddS3BlobStorage", "ElRoso.Commons.S3" },
         { "AddAzureBlobStorage", "ElRoso.Commons.AzureBlob" },
@@ -90,6 +95,7 @@ public class PackageBoundaryTests
         "ElRoso.Commons.AspNetCore",
         "ElRoso.Commons.Serilog",
         "ElRoso.Commons.EntityFrameworkCore",
+        "ElRoso.Commons.Smtp",
     };
 
     [Theory]

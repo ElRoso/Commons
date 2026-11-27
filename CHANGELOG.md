@@ -2,6 +2,24 @@
 
 Una sección `## <PackageId> <versión>` por paquete y versión; los workflows de release la buscan por ese par.
 
+## ElRoso.Commons.Smtp 1.0.0
+
+- Paquete para enviar correos por SMTP con `System.Net.Mail`. Su única dependencia de Commons es `ElRoso.Commons.Core`.
+- `AddSmtpMailService` registra `ISmtpMailService` como singleton y usa la configuración `SmtpClient:*`.
+
+## ElRoso.Commons.Core 1.3.0
+
+- `ISmtpMailService` e `IGraphMailService` exponen `SendAsync` con `EmailRequest` y un token de cancelación opcional.
+
+## ElRoso.Commons.Graph 2.1.0
+
+- `AddGraphMailService` registra `IGraphMailService` como singleton y usa la configuración `AzureMailService:*`.
+- `AddMailService` registra ambos transportes y conserva el contrato singleton `IMailService`. El paquete incorpora `ElRoso.Commons.Smtp` 1.0.0.
+
+## ElRoso.Commons 2029.3.0
+
+- El metapaquete suma `ElRoso.Commons.Smtp` 1.0.0 y referencia `ElRoso.Commons.Core` 1.3.0 y `ElRoso.Commons.Graph` 2.1.0.
+
 ## ElRoso.Commons.Argon2 1.0.0
 
 - Paquete nuevo: `Argon2idPasswordHasher` hashea con Argon2id en formato PHC (`$argon2id$v=19$…`, por defecto m = 19456 KiB, t = 2, p = 1) y verifica hashes BCrypt (`$2a$`, `$2b$`, `$2x$`, `$2y$`). Usa `BouncyCastle.Cryptography` 2.7.0 (MIT).

@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>2.0.1</Version>
+		<Version>2.1.0</Version>
 		<Description>Envío de mails por Microsoft Graph o SMTP.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\ElRoso.Commons.Core\ElRoso.Commons.Core.csproj" />
+		<ProjectReference Include="..\ElRoso.Commons.Smtp\ElRoso.Commons.Smtp.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

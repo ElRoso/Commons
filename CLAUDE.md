@@ -111,7 +111,8 @@ Nada en el código está atado a un producto: los nombres de bot, rutas y demás
 │   ├── ElRoso.Commons.EntityFrameworkCore/  # ElRosoRepositoryBase<T>, BaseEntity, AddMemoryCacheCustom, DbCacheConfigurationCheck
 │   ├── ElRoso.Commons.MongoDB/          # Repository<T>, AuditEntity, AddMongoDb
 │   ├── ElRoso.Commons.AzureAD/          # AddAuthenticationAzureAD
-│   ├── ElRoso.Commons.Graph/            # MailService (Graph / SMTP), AddMailService
+│   ├── ElRoso.Commons.Smtp/             # SmtpMailService, AddSmtpMailService
+│   ├── ElRoso.Commons.Graph/            # GraphMailService, AddGraphMailService, fachada MailService
 │   ├── ElRoso.Commons.SharePoint/       # ISharePointFileService, AddSharePointFileService
 │   ├── ElRoso.Commons.S3/               # S3BlobStorageService, AddS3BlobStorage
 │   ├── ElRoso.Commons.AzureBlob/        # AzureBlobStorageService, AddAzureBlobStorage
@@ -149,7 +150,7 @@ builder.Services.AddEncryptionHelper(builder.Configuration);         // Core: ob
 builder.Services.AddArgon2PasswordHasher(builder.Configuration);      // Argon2: reemplaza IPasswordHasher
 builder.Services.AddMemoryCacheCustom();                             // EntityFrameworkCore
 builder.Services.AddMongoDb(builder.Configuration);                  // MongoDB: obligatorio si usa MongoDB
-builder.Services.AddMailService();                                   // Graph
+builder.Services.AddMailService();                                   // Graph: fachada de correo y ambos transportes
 builder.Services.AddHealthChecks();
 builder.Services.AddExceptionHandlerMiddleware();
 // Alternativa: builder.Services.AddElRosoProblemDetails();   // reemplaza al middleware RFC 7807
@@ -275,7 +276,9 @@ clave (evita thundering herd). Toda escritura invalida la cache. 20 min absoluto
 Por paquete: `AddEncryptionHelper` (Core, obligatorio con BCrypt), `AddArgon2PasswordHasher` (Argon2, lee
 `PasswordHashing:Argon2:MemoryKiB`, `:Iterations` y `:Parallelism`; reemplaza `IPasswordHasher` en cualquier orden
 respecto de `AddEncryptionHelper` y conserva `EncryptionHelper`), `AddMongoDb` (MongoDB, obligatorio con
-MongoDB), `AddMailService` (Graph), `AddMemoryCacheCustom` (EntityFrameworkCore), `AddS3BlobStorage` o
+MongoDB), `AddSmtpMailService` (Smtp, registra `ISmtpMailService`), `AddGraphMailService` (Graph,
+registra `IGraphMailService`), `AddMailService` (Graph, registra ambos transportes y la fachada
+singleton `IMailService`), `AddMemoryCacheCustom` (EntityFrameworkCore), `AddS3BlobStorage` o
 `AddAzureBlobStorage` (**uno solo**: los dos registran `IBlobStorageService`), `AddSharePointFileService`,
 `AddTelegramBot("nombre", o => o.Token = ...)`, `AddTelegramPolling`, `AddTelegramNotifier(configuration)`
 (lee `Telegram:Notifier:Token` y `Telegram:Notifier:RecipientIds` separados por `;`; si faltan registra

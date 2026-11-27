@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi", "samples\OpenApi\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElRoso.Commons.Argon2", "src\ElRoso.Commons.Argon2\ElRoso.Commons.Argon2.csproj", "{4696D885-AF72-4FB9-AAA3-66BC1141EA19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElRoso.Commons.Smtp", "src\ElRoso.Commons.Smtp\ElRoso.Commons.Smtp.csproj", "{4D988789-3078-493B-834D-F7EDF902698A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -285,6 +287,18 @@ Global
 		{4696D885-AF72-4FB9-AAA3-66BC1141EA19}.Release|x64.Build.0 = Release|Any CPU
 		{4696D885-AF72-4FB9-AAA3-66BC1141EA19}.Release|x86.ActiveCfg = Release|Any CPU
 		{4696D885-AF72-4FB9-AAA3-66BC1141EA19}.Release|x86.Build.0 = Release|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Debug|x64.Build.0 = Debug|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Debug|x86.Build.0 = Debug|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Release|x64.ActiveCfg = Release|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Release|x64.Build.0 = Release|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Release|x86.ActiveCfg = Release|Any CPU
+		{4D988789-3078-493B-834D-F7EDF902698A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,6 +323,7 @@ Global
 		{0194A6AD-646E-40C2-8809-C59250C250FF} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{FBA240A6-6DC2-4F80-BDDA-49A4D413A0A7} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 		{4696D885-AF72-4FB9-AAA3-66BC1141EA19} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{4D988789-3078-493B-834D-F7EDF902698A} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFDCD6CE-42A5-49F6-95B4-12F77FCD001F}

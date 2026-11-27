@@ -51,6 +51,7 @@
 		<ProjectReference Include="..\src\ElRoso.Commons.MongoDB\ElRoso.Commons.MongoDB.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.AzureAD\ElRoso.Commons.AzureAD.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.Graph\ElRoso.Commons.Graph.csproj" />
+		<ProjectReference Include="..\src\ElRoso.Commons.Smtp\ElRoso.Commons.Smtp.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.SharePoint\ElRoso.Commons.SharePoint.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.S3\ElRoso.Commons.S3.csproj" />
 		<ProjectReference Include="..\src\ElRoso.Commons.AzureBlob\ElRoso.Commons.AzureBlob.csproj" />
